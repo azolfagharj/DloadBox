@@ -17,7 +17,7 @@ We are approaching the launch of the first version of DloadBox! For now, enthusi
 
 Currently, it has been tested only on Ubuntu, but it is designed for all 64-bit Linux distributions. Feel free to test it on your Linux systems and open issues if you encounter any problems or have feature requests.
 
----
+
 
 ## Installation Instructions:
 
