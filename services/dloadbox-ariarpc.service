@@ -1,0 +1,17 @@
+[Unit]
+Description=DloadBox Aria RPC
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStartPre=/usr/bin/env touch /var/tmp/aria2c.session
+ExecStartPre=/bin/sleep 10
+ExecStart=/usr/bin/aria2c --console-log-level=warn --enable-rpc --rpc-listen-all --conf-path=/opt/dloadbox/config/dloadbox-aria2.conf
+TimeoutStopSec=20
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,14 @@
+[Unit]
+Description=Dloadbox Telegram Bot Service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/dloadbox/bin
+ExecStart=/opt/dloadbox/venv/dloadbox-telegrambot/bin/python3 /opt/dloadbox/bin/dloadbox-telegrambot.py
+Restart=always
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

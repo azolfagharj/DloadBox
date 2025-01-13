@@ -1,0 +1,9 @@
+[Unit]
+Description=DloadBox Filebrowser
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/dloadbox-filebrowser -c /opt/dloadbox/config/dloadbox-filebrowser.json
+
+[Install]
+WantedBy=multi-user.target
