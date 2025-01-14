@@ -1588,10 +1588,18 @@ install_dloadbox() {
     az_log b "---------------------------------"
     az_log b "Extracting the package"
     sleep 1
-    if unzip dloadbox.zip &>/dev/null; then
-        az_log bg "The package has been successfully extracted"
+    if mkdir -p dloadbox &>/dev/null; then
+        if unzip dloadbox.zip -d dloadbox &>/dev/null; then
+            az_log bg "The package has been successfully extracted"
+        else
+            az_log br "There was an error in extracting the package"
+            az_log br "Exiting script in 3 second..."
+            az_log br "Please open an issue in github"
+            sleep 3
+            exit 1
+        fi
     else
-        az_log br "There was an error in extracting the package"
+        az_log br "There was an error in creating directory"
         az_log br "Exiting script in 3 second..."
         az_log br "Please open an issue in github"
         sleep 3
