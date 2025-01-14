@@ -21,13 +21,17 @@ jobs:
       - name: Create release notes
         id: generate_notes
         run: |
-          echo "# Version: $VERSION" >> release_notes.md
+          echo "# Version: $VERSION" > release_notes.md
           echo "## Installation" >> release_notes.md
           echo "\`\`\`bash" >> release_notes.md
           echo "wget https://github.com/${{ github.repository }}/releases/download/$VERSION/dloadbox-installer.sh" >> release_notes.md
           echo "chmod +x dloadbox-installer.sh" >> release_notes.md
           echo "./dloadbox-installer.sh" >> release_notes.md
           echo "\`\`\`" >> release_notes.md
+
+      - name: Create dloadbox.zip
+        run: |
+          zip dloadbox.zip -r bin/dloadbox-installer.sh
 
       - name: Create release
         uses: softprops/action-gh-release@v1
@@ -40,6 +44,3 @@ jobs:
             dloadbox.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload assets
-        run: zip dloadbox.zip -r .
