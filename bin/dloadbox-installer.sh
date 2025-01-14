@@ -4,7 +4,7 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 
 # Log file
-VERSION_NUMBER="alpha-2.0.1"
+VERSION_NUMBER="alpha-2.0.2"
 VERSION_CREATE="2024-12-01"
 VERSION_UPDATE="2025-01-14"
 
