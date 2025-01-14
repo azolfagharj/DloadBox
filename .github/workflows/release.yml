@@ -35,7 +35,7 @@ jobs:
 
       - name: Create dloadbox.zip
         run: |
-          zip -r dloadbox.zip .
+          zip -r dloadbox.zip . -x "*.git/*"
 
       - name: Create release
         uses: softprops/action-gh-release@v1
