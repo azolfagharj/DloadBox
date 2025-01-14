@@ -2,11 +2,9 @@
 # DloadBox Installer
 # DloadBox is a complete download management platform combining aria2c, Lighttpd, ariaNG, RPC integration, and a Telegram bot.
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
-# Version: 1.4.1
-# Since:    2024-10-01
-# Updated : 2024-12-27
+
 # Log file
-VERSION_NUMBER="alpha-2.0.0"
+VERSION_NUMBER="alpha-2.0.1"
 VERSION_CREATE="2024-12-01"
 VERSION_UPDATE="2025-01-14"
 
@@ -722,6 +720,15 @@ install_filebrowser() {
         az_log br "Please open an issue in github"
         sleep 3
         exit 1
+    fi
+    # Remove tar file forcefully
+    if rm -f dloadbox-filebrowser.tar.gz &>/dev/null; then
+        az_log bg "Tar file removed successfully"
+    else
+        az_log br "There was an error in removing tar file"
+        az_log br "It's not a big deal"
+        az_log br "But if you want to help us, Please open an issue in github"
+        sleep 3
     fi
     az_log b "---------------------------------"
     az_log b "Moving filebrowser LICENSE to the installation folder"
@@ -1616,6 +1623,22 @@ install_dloadbox() {
         az_log br "Please open an issue in github"
         sleep 3
         exit 1
+    fi
+    az_log b "Cleaning up release zip file..."
+    if rm -f dloadbox.zip &>/dev/null; then
+        az_log bg "Zip file cleaned up successfully"
+    else
+        az_log br "There was an error in cleaning up zip file"
+        az_log br "It's not a big deal but you can open an issue in github to help us improve the script"
+        sleep 3
+    fi
+
+    if rm -rf dloadbox &>/dev/null; then
+        az_log bg "Temporary installation directory cleaned up successfully"
+    else
+        az_log br "There was an error in cleaning up temporary installation directory"
+        az_log br "It's not a big deal but you can open an issue in github to help us improve the script"
+        sleep 3
     fi
     az_log b "---------------------------------"
     az_log b "Setting permissions"
