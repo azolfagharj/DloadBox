@@ -6,9 +6,9 @@
 # Since:    2024-10-01
 # Updated : 2024-12-27
 # Log file
-VERSION_NUMBER="1.4.1"
+VERSION_NUMBER="alpha-2.0.0"
 VERSION_CREATE="2024-12-01"
-VERSION_UPDATE="2024-12-24"
+VERSION_UPDATE="2025-01-14"
 
 LOG_FILE="./dloadbox-install.log"
 # Define colors
@@ -127,7 +127,7 @@ init_bsics(){
     az_log b "Checking system requirements and preparing environment..."
     sleep 2
     PKG_DEP="tar wget curl make bzip2 gzip wget unzip sudo netcat"
-    URL_DLOADBOX="https://github.com/azolfagharj/DloadBox/releases/download/Alfa-v1.0.0/dloadbox.zip"
+    URL_DLOADBOX="https://github.com/azolfagharj/DloadBox/releases/download/$VERSION_NUMBER/dloadbox.zip"
     URL_FILEBROWSER="https://github.com/filebrowser/filebrowser/releases/download/v2.31.2/linux-amd64-filebrowser.tar.gz"
     URL_ARIANG="https://github.com/mayswind/AriaNg/releases/download/1.3.8/AriaNg-1.3.8.zip"
     DIR_INSTALL_SOURCE=$(dirname "$(realpath "$0")")/

@@ -1,0 +1,51 @@
+name: Create Release
+
+on:
+  push:
+    branches:
+      - main  # Trigger this action only on changes to the main branch.
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # Step 2: Extract version from bin/dloadbox-installer.sh
+    - name: Extract version from bin/dloadbox-installer.sh
+      run: |
+        VERSION=$(grep VERSION_NUMBER bin/dloadbox-installer.sh | head -n 1 | awk -F '"' '{print $2}')
+        echo "VERSION=$VERSION" >> $GITHUB_ENV  # Store the extracted version in an environment variable for later use.
+
+    # Step 3: Create the zip file
+    - name: Create dloadbox.zip
+      run: |
+        zip -r dloadbox.zip .  # Create the zip file with the name dloadbox.zip.
+
+    # Step 4: Prepare release notes
+    - name: Prepare release notes
+      run: |
+        echo "# Version: ${{ env.VERSION }}" > release_notes.md
+        echo "" >> release_notes.md
+        echo "## Installation" >> release_notes.md
+        echo "\`\`\`bash" >> release_notes.md
+        echo "wget https://github.com/azolfagharj/DloadBox/releases/download/${{ env.VERSION }}/dloadbox-installer.sh" >> release_notes.md
+        echo "chmod +x dloadbox-installer.sh" >> release_notes.md
+        echo "./dloadbox-installer.sh" >> release_notes.md
+        echo "\`\`\`" >> release_notes.md
+
+    # Step 5: Create the GitHub release
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ env.VERSION }}  # Use the version as the tag name.
+        release_name: Release ${{ env.VERSION }}  # Set the release name.
+        body_path: ./release_notes.md  # Attach the release notes file as the body.
+        files: |
+          bin/dloadbox-installer.sh  # Include the installer script as a release asset.
+          dloadbox.zip  # Attach dloadbox.zip as an asset to the release.
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use GitHub Token for authentication.
