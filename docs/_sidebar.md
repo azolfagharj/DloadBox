@@ -1,5 +1,0 @@
-- [Home](index.md)
-- [Install DloadBox](installation.md)
-- [Add a Download via Web Interface](web-interface.md)
-- [Add a Download via Telegram Bot](telegram-bot.md)
-- [Manage Your Downloaded Files](file-browser.md)
