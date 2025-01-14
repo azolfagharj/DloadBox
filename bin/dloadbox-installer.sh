@@ -127,8 +127,9 @@ init_bsics(){
     az_log b "Checking system requirements and preparing environment..."
     sleep 2
     PKG_DEP="tar wget curl make bzip2 gzip wget unzip sudo netcat"
-    URL_DLOADBOX="https://github.com/azolfagharj/DloadBox/releases/download/v1.0.0/dloadbox.zip"
+    URL_DLOADBOX="https://github.com/azolfagharj/DloadBox/releases/download/Alfa-v1.0.0/dloadbox.zip"
     URL_FILEBROWSER="https://github.com/filebrowser/filebrowser/releases/download/v2.31.2/linux-amd64-filebrowser.tar.gz"
+    URL_ARIANG="https://github.com/mayswind/AriaNg/releases/download/1.3.8/AriaNg-1.3.8.zip"
     DIR_INSTALL_SOURCE=$(dirname "$(realpath "$0")")/
     DIR_INSTALL_DEST="/opt/dloadbox/"
     FILE_INSTALL_SCRIPT=$(basename "$0")
@@ -613,6 +614,58 @@ install_aria2() {
     fi
     az_log b "---------------------------------"
     az_log bg "The installation and configuration of the aria2  and RPC service was successful."
+}
+install_ariang() {
+    echo
+    az_log sg "╔════════════════════════════════════════════════╗"
+    az_log sg "║    AriaNG Installation and Configuration       ║"
+    az_log sg "╚════════════════════════════════════════════════╝"
+    echo
+    sleep 1
+    az_log l "Installing AriaNG GUI"
+    az_log b "Downloading AriaNG GUI..."
+    sleep 1
+    if wget --no-check-certificate -q -O /opt/dloadbox/www/dloadbox-ariang.zip "$URL_ARIANG" &>/dev/null; then
+        az_log bg "AriaNG GUI have been successfully downloaded"
+    else
+        az_log br "There was an error in downloading AriaNG GUI"
+        az_log br "Exiting script in 3 second..."
+        az_log br "Please open an issue in github"
+        sleep 3
+        exit 1
+    fi
+    az_log b "Extracting AriaNG GUI..."
+    sleep 1
+    if unzip -q /opt/dloadbox/www/dloadbox-ariang.zip -d /opt/dloadbox/www/ &>/dev/null; then
+        az_log bg "AriaNG GUI have been successfully extracted"
+    else
+        az_log br "There was an error in extracting AriaNG GUI"
+        az_log br "Exiting script in 3 second..."
+        az_log br "Please open an issue in github"
+        sleep 3
+        exit 1
+    fi
+    az_log b "---------------------------------"
+    sleep 1
+    az_log b "Setting up AriaNG GUI Permissions"
+    sleep 1
+    find /opt/dloadbox/www/ -type f -exec chmod 644 {} \;
+    find /opt/dloadbox/www/ -type d -exec chmod 755 {} \;
+    chown -R www-data:www-data /opt/dloadbox/www/
+    az_log bg "AriaNG GUI Permissions have been successfully set"
+    az_log b "---------------------------------"
+    az_log b "Cleaning up..."
+    sleep 1
+    if rm -rf /opt/dloadbox/www/dloadbox-ariang.zip &>/dev/null; then
+        az_log bg "Cleanup completed"
+    else
+        az_log br "There was an error in cleaning up"
+        az_log br "It's not big deal"
+        az_log br "But if you want to help us, Please open an issue in github"
+        sleep 3
+    fi
+    az_log b "---------------------------------"
+    az_log bg "The installation and configuration of the AriaNG GUI was successful."
 }
 install_filebrowser() {
     echo
@@ -1586,6 +1639,9 @@ install_dloadbox() {
     az_log b "---------------------------------"
     sleep 2
     install_telegrambot
+    sleep 2
+    install_ariang
+    az_log b "---------------------------------"
     sleep 2
     az_log b "________________________________________________________________________"
     az_log b "Installation completed successfully"

@@ -1,6 +1,6 @@
 {
     "address": "0.0.0.0",
-    "database": "/opt/dloadbox/congig/dloadbox-filebrowser.db",
+    "database": "/opt/dloadbox/config/dloadbox-filebrowser.db",
     "log": "/opt/dloadbox/log/dloadbox-filebrowser.log",
     "port": 6803,
     "root": "/opt/dloadbox/downloads",
