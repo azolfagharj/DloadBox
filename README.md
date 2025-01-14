@@ -1,8 +1,8 @@
 ```
 ██████╗ ██╗      ██████╗  █████╗ ██████╗ ██████╗  ██████╗ ██╗  ██╗
 ██╔══██╗██║     ██╔═══██╗██╔══██╗██╔══██╗██╔══██╗██╔═══██╗╚██╗██╔╝
-██║  ██║██║     ██║   ██║███████║██║  ██║██████╔╝██║   ██║ ╚███╔╝ 
-██║  ██║██║     ██║   ██║██╔══██║██║  ██║██╔══██╗██║   ██║ ██╔██╗ 
+██║  ██║██║     ██║   ██║███████║██║  ██║██████╔╝██║   ██║ ╚███╔╝
+██║  ██║██║     ██║   ██║██╔══██║██║  ██║██╔══██╗██║   ██║ ██╔██╗
 ██████╔╝███████╗╚██████╔╝██║  ██║██████╔╝██████╔╝╚██████╔╝██╔╝ ██╗
 ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═════╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝
                 Full Download and File Manager Platform
@@ -13,7 +13,7 @@ DloadBox is a complete download management platform combining **aria2c**, **Ligh
 # Coming soon...
 # DloadBox - Alpha Version Installer
 
-We are approaching the launch of the first version of DloadBox! For now, enthusiasts can install and use the Alpha version with this installer without any issues. 
+We are approaching the launch of the first version of DloadBox! For now, enthusiasts can install and use the Alpha version with this installer without any issues.
 
 Currently, it has been tested only on Ubuntu, but it is designed for all 64-bit Linux distributions. Feel free to test it on your Linux systems and open issues if you encounter any problems or have feature requests.
 
@@ -24,7 +24,7 @@ Currently, it has been tested only on Ubuntu, but it is designed for all 64-bit 
 Download and Run the installer using the following commands:
 
 ```
-wget https://github.com/azolfagharj/DloadBox/releases/download/Alfa-v1.0.0/dloadbox-installer.sh
+wget https://github.com/azolfagharj/DloadBox/releases/latest/download/dloadbox-installer.sh
 
 chmod +x dloadbox-installer.sh
 
