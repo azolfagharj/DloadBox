@@ -5,8 +5,8 @@
 # Version: 1.4.1
 # Since:    2024-10-01
 # Updated : 2024-12-27
-
-VERSION_NUMBER="alpha-2.0.2"
+# Version info
+VERSION_NUMBER="alpha-2.0.3"
 VERSION_CREATE="2024-12-01"
 VERSION_UPDATE="2025-01-16"
 # Log file

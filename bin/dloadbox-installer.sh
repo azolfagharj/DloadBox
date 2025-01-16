@@ -3,11 +3,11 @@
 # DloadBox is a complete download management platform combining aria2c, Lighttpd, ariaNG, RPC integration, and a Telegram bot.
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 
-# Log file
-VERSION_NUMBER="alpha-2.0.2"
+# Version info
+VERSION_NUMBER="alpha-2.0.3"
 VERSION_CREATE="2024-12-01"
-VERSION_UPDATE="2025-01-14"
-
+VERSION_UPDATE="2025-01-16"
+# Log file
 LOG_FILE="./dloadbox-install.log"
 # Define colors
 GREEN='\033[0;32m'
@@ -1106,19 +1106,19 @@ show_dloadbox_info() {
         echo
         echo "Download Manager"
         echo "----------------------------------------"
-        echo "Web Interface: $URL_ARIANG"
+        echo "Web Interface=$URL_ARIANG"
         echo "Features: Create and manage downloads via browser"
         echo
         echo "File Browser"
         echo "----------------------------------------"
-        echo "URL: http://${IP_MAIN}:${PORT_FILEBROWSER}"
-        echo "Username: dloadboxadmin"
-        echo "Password: $PASSWORD_FILEBROWSER"
+        echo "FILE_BROWSER_URL=http://${IP_MAIN}:${PORT_FILEBROWSER}"
+        echo "FILE_BROWSER_USERNAME=dloadboxadmin"
+        echo "FILE_BROWSER_PASSWORD=$PASSWORD_FILEBROWSER"
         echo "Features: Browse and manage downloaded files"
         echo
         echo "Telegram Bot"
         echo "----------------------------------------"
-        echo "Bot: @${USERNAME_BOT}"
+        echo "TELEGRAM_BOT_USERNAME=@${USERNAME_BOT}"
         echo "Features: Send links directly to bot for downloading"
     } > /opt/dloadbox/dloadbox-info
 }
