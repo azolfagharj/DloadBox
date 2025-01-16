@@ -1106,21 +1106,24 @@ show_dloadbox_info() {
         echo
         echo "Download Manager"
         echo "----------------------------------------"
-        echo "Web Interface=$URL_ARIANG"
-        echo "Features: Create and manage downloads via browser"
+        echo "WEB_GUI_URL=$URL_ARIANG"
+        echo "WEB_GUI_PORT=$PORT_WEBSERVER"
         echo
         echo "File Browser"
         echo "----------------------------------------"
         echo "FILE_BROWSER_URL=http://${IP_MAIN}:${PORT_FILEBROWSER}"
         echo "FILE_BROWSER_USERNAME=dloadboxadmin"
         echo "FILE_BROWSER_PASSWORD=$PASSWORD_FILEBROWSER"
-        echo "Features: Browse and manage downloaded files"
         echo
         echo "Telegram Bot"
         echo "----------------------------------------"
         echo "TELEGRAM_BOT_USERNAME=@${USERNAME_BOT}"
-        echo "Features: Send links directly to bot for downloading"
-    } > /opt/dloadbox/dloadbox-info
+        echo "TELEGRAM_BOT_TOKEN=$BOT_TOKEN"
+        echo "TELEGRAM_BOT_LIMIT_PERMISSION=$LIMIT_PERMISSION"
+        echo "TELEGRAM_BOT_ALLOWED_USERNAMES=$ALLOWED_USERNAMES"
+        echo "TELEGRAM_BOT_ARIA2_RPC_URL=http://${IP_MAIN}:${PORT_RPC}/jsonrpc"
+        echo "TELEGRAM_BOT_ARIA2_RPC_SECRET=token:${SECRET_RPC}"
+    } >> /opt/dloadbox/dloadbox-info
 }
 firewall_config() {
     local action=""
