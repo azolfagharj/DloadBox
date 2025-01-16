@@ -6,9 +6,10 @@
 # Since:    2024-10-01
 # Updated : 2024-12-27
 # Log file
-VERSION_NUMBER="1.4.1"
+VERSION_NUMBER="alpha-2.0.2"
 VERSION_CREATE="2024-12-01"
-VERSION_UPDATE="2024-12-24"
+VERSION_UPDATE="2025-01-16"
+
 
 LOG_FILE="/opt/dloadbox/log/dloadbox-manager.log"
 # Define colors
