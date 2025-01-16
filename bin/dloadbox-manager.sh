@@ -5,12 +5,11 @@
 # Version: 1.4.1
 # Since:    2024-10-01
 # Updated : 2024-12-27
-# Log file
+
 VERSION_NUMBER="alpha-2.0.2"
 VERSION_CREATE="2024-12-01"
 VERSION_UPDATE="2025-01-16"
-
-
+# Log file
 LOG_FILE="/opt/dloadbox/log/dloadbox-manager.log"
 # Define colors
 GREEN='\033[0;32m'
