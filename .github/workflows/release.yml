@@ -19,7 +19,7 @@ jobs:
       - name: Extract version number
         id: extract_version
         run: |
-          VERSION=$(grep VERSION_NUMBER bin/dloadbox-installer.sh | head -n 1 | awk -F '"' '{print $2}')
+          VERSION=$(grep VERSION_DLOADBOX bin/dloadbox-installer.sh | head -n 1 | awk -F '"' '{print $2}')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Create release notes
