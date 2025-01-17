@@ -1104,9 +1104,9 @@ show_dloadbox_info() {
     # Save to file
     {
         echo
-        echo "============================================================"
-        echo "==             DloadBox Infor for Users                   =="
-        echo "============================================================"
+        echo "############################################################"
+        echo "##             DloadBox Infor for Users                   ##"
+        echo "############################################################"
         echo
         echo "Download Manager"
         echo "----------------------------------------"
@@ -1126,9 +1126,9 @@ show_dloadbox_info() {
         echo "TELEGRAM_BOT_LIMIT_PERMISSION=$LIMIT_PERMISSION"
         echo "TELEGRAM_BOT_ALLOWED_USERNAMES=$ALLOWED_USERNAMES"
         echo
-        echo "============================================================"
-        echo "==             DloadBox Internal Variables                =="
-        echo "============================================================"
+        echo "############################################################"
+        echo "##             DloadBox Internal Variables                ##"
+        echo "############################################################"
         echo "# Versions"
         echo "VERSION_DLOADBOX=$VERSION_DLOADBOX"
         echo "VERSION_DLOADBOX_CREATE=$VERSION_DLOADBOX_CREATE"
