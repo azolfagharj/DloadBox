@@ -2,13 +2,116 @@
 # DloadBox Installer
 # DloadBox is a complete download management platform combining aria2c, Lighttpd, ariaNG, RPC integration, and a Telegram bot.
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
-# Version: 1.4.1
-# Since:    2024-10-01
-# Updated : 2024-12-27
+#region version
 # Version info
-VERSION_NUMBER="alpha-2.0.3"
-VERSION_CREATE="2024-12-01"
-VERSION_UPDATE="2025-01-16"
+VERSION_DLOADBOX="alpha-2.0.4"
+VERSION_DLOADBOX_CREATE="2024-12-01"
+VERSION_DLOADBOX_UPDATE="2025-01-17"
+VERSION_FILEBROWSER="2.31.2"
+VERSION_ARIANG="1.3.8"
+#endregion
+#region URL
+# ################################################################################## #
+# #                                   URL                                          # #
+# ################################################################################## #
+# DloadBox URL
+URL_DLOADBOX_GITHUB="https://github.com/azolfaghar/dloadbox"
+URL_DLOADBOX_GITHUB_ISSUES="https://github.com/azolfaghar/dloadbox/issues"
+URL_DLOADBOX_LATEST_ZIP="https://github.com/azolfagharj/DloadBox/releases/download/$VERSION_DLOADBOX/dloadbox.zip"
+URL_FILEBROWSER_TARGZ="https://github.com/filebrowser/filebrowser/releases/download/$VERSION_FILEBROWSER/linux-amd64-filebrowser.tar.gz"
+URL_ARIANG_ZIP="https://github.com/mayswind/AriaNg/releases/download/$VERSION_ARIANG/AriaNg-$VERSION_ARIANG.zip"
+#endregion
+#region hierarchy
+# ################################################################################## #
+# #                               DloadBox Hierarchy                               # #
+# ################################################################################## #
+# Info file
+file_dloadbox_info="/opt/dloadbox/dloadbox-info"
+# Config files
+file_config_aria2="/opt/dloadbox/config/dloadbox-aria2.conf"
+file_config_webserver="/opt/dloadbox/config/dloadbox-lighttpd.conf"
+file_config_telegram_bot="/opt/dloadbox/config/dloadbox-telegram-bot.conf"
+file_config_filebrowser_json="/opt/dloadbox/config/dloadbox-filebrowser.json"
+file_config_filebrowser_db="/opt/dloadbox/config/dloadbox-filebrowser.db"
+# Services files
+file_service_ariarpc="/opt/dloadbox/services/dloadbox-aria2rpc.service"
+file_service_webserver="/opt/dloadbox/services/dloadbox-lighttpd.service"
+file_service_telegram_bot="/opt/dloadbox/services/dloadbox-telegram.service"
+file_service_filebrowser="/opt/dloadbox/services/dloadbox-filebrowser.service"
+# Binaries
+file_bin_aria2c="/usr/bin/aria2c"
+file_bin_lighttpd="/usr/sbin/lighttpd"
+file_bin_telegram_bot="/opt/dloadbox/bin/dloadbox-telegrambot.py"
+file_bin_filebrowser="/opt/dloadbox/bin/dloadbox-filebrowser"
+file_bin_dloadbox_manager="/opt/dloadbox/bin/dloadbox-manager.sh"
+file_bin_dloadbox_installer="/opt/dloadbox/bin/dloadbox-installer.sh"
+# Symbolic links
+symb_config_webserver="/etc/lighttpd/conf-enabled/dloadbox-lighttpd.conf"
+symb_service_ariarpc="/etc/systemd/system/dloadbox-ariarpc.service"
+symb_service_filebrowser="/etc/systemd/system/dloadbox-filebrowser.service"
+symb_service_telegram_bot="/etc/systemd/system/dloadbox-telegram.service"
+symb_bin_filebrowser="/usr/bin/dloadbox-filebrowser"
+# Directories
+dir_dloadbox="/opt/dloadbox"
+dir_bin="/opt/dloadbox/bin"
+dir_config="/opt/dloadbox/config"
+dir_services="/opt/dloadbox/services"
+dir_log="/opt/dloadbox/log"
+dir_www="/opt/dloadbox/www"
+dir_venv="/opt/dloadbox/venv"
+dir_venv_telegrambot="/opt/dloadbox/venv/telegrambot"
+#endregion
+#region variables
+# ################################################################################## #
+# #                               DloadBox Variables                               # #
+# ################################################################################## #
+# Secrets variables
+SECRET_ARIA2_RPCTOKEN=""
+SECRET_ARIA2_RPCTOKEN_HASH=""
+SECRET_TELEGRAM_BOT_TOKEN=""
+SECRET_FILEBROWSER_PASSWORD=""
+SECRET_FILEBROWSER_PASSWORD_HASH=""
+# User variables
+USERNAME_FILEBROWSER=""
+USERNAME_TELEGRAM_BOT=""
+USERNAME_TELEGRAM_ALLOWED=""
+# Network variables
+IP_MAIN=""
+PORT_RPC=""
+PORT_WEBSERVER=""
+PORT_FILEBROWSER=""
+# Services variables
+SERVICE_ARIARPC=""
+SERVICE_FILEBROWSER=""
+SERVICE_TELEGRAM_BOT=""
+#endregion
+#region InternalConfig
+# ################################################################################## #
+# #                               DloadBox Internal Config                       # #
+# ################################################################################## #
+# Aria2 config
+INTERNALCONFIG_ARIA2_RPC_SECRET=""
+INTERNALCONFIG_ARIA2_RPC_LISTEN_PORT=""
+# telegram bot config
+INTERNALCONFIG_TELEGRAMBOT_LIMIT_PERMISSION=""
+INTERNALCONFIG_TELEGRAMBOT_ALLOWED_USERNAMES=""
+INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_SECRET=""
+INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_URL=""
+INTERNALCONFIG_TELEGRAMBOT_BOT_TOKEN=""
+# Webserver config
+INTERNALCONFIG_WEBSERVER_PORT=""
+# Filebrowser config
+INTERNALCONFIG_FILEBROWSER_PASSWORD=""
+INTERNALCONFIG_FILEBROWSER_PASSWORD_HASH=""
+INTERNALCONFIG_FILEBROWSER_USERNAME=""
+INTERNALCONFIG_FILEBROWSER_PORT=""
+# AriaNG config
+INTERNALCONFIG_ARIANG_URL=""
+#endregion
+#region Log
+# ################################################################################## #
+# #                               DloadBox Log                                     # #
+# ################################################################################## #
 # Log file
 LOG_FILE="/opt/dloadbox/log/dloadbox-manager.log"
 # Define colors
@@ -23,6 +126,7 @@ NC='\033[0m'
 BOLD='\033[1m'
 # date format
 DATE_FORMAT='+%Y-%m-%d %H:%M:%S'
+#endregion
 display_logo() {
     echo ""
     echo -e "                ${BLUE}██████╗ ${GREEN}██╗      ██████╗  █████╗ ██████╗ ${CYAN}██████╗  ██████╗ ██╗  ██╗${NC}"
@@ -89,6 +193,42 @@ az_log() {
             echo "$current_date - $message" >> "$LOG_FILE"
             ;;
     esac
+}
+
+config_detector_ip(){
+    az_log b "Detecting IP address..."
+    if INTERFACE_MAIN=$(ip route | awk '/default/ {print $5}' | head -n 1); then
+        az_log b "Main interface is: $INTERFACE_MAIN"
+        if IP_MAIN=$(ip addr show "$INTERFACE_MAIN" | awk '/inet / {print $2}' | cut -d/ -f1 | head -n 1); then
+            az_log b " IP is: $IP_MAIN"
+        else
+            az_log br "Error: Unable to retrieve the main IP."
+            return 1
+        fi
+    else
+        az_log br "Error: Unable to retrieve the main interface."
+        return 1
+    fi
+}
+config_detector_aria2(){
+    az_log b "Detecting aria2 rpc config..."
+    if SECRET_ARIA2_RPCTOKEN=$(grep -i rpc-secret "$file_config_aria2" | awk -F'=' '{print $2}'); then
+        az_log b "Aria2 rpc secret extracted successfully."
+    else
+        az_log br "Error: Unable to retrieve the aria2 rpc secret."
+        return 1
+    fi
+}
+info_creator(){
+    az_log b "Creating dloadbox-info file..."
+    if ! ip_detector; then
+        az_log br "Error: Unable to retrieve the main IP."
+        az_log br "Can't create dloadbox-info file."
+        az_log br "you can open a issue on github: https://github.com/azolfaghar/dloadbox/issues"
+        az_log br "Returning to the  menu..."
+        return 1
+    fi
+
 }
 main_menu() {
     clear

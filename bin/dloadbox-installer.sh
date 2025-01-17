@@ -4,9 +4,11 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 
 # Version info
-VERSION_NUMBER="alpha-2.0.3"
-VERSION_CREATE="2024-12-01"
-VERSION_UPDATE="2025-01-16"
+VERSION_DLOADBOX="alpha-2.0.4"
+VERSION_DLOADBOX_CREATE="2024-12-01"
+VERSION_DLOADBOX_UPDATE="2025-01-17"
+VERSION_FILEBROWSER="2.31.2"
+VERSION_ARIANG="1.3.8"
 # Log file
 LOG_FILE="./dloadbox-install.log"
 # Define colors
@@ -1101,8 +1103,10 @@ show_dloadbox_info() {
 
     # Save to file
     {
-        echo "DLOADBOX INFO"
-        echo "----------------------------------------"
+        echo
+        echo "============================================================"
+        echo "==             DloadBox Infor for Users                   =="
+        echo "============================================================"
         echo
         echo "Download Manager"
         echo "----------------------------------------"
@@ -1121,8 +1125,36 @@ show_dloadbox_info() {
         echo "TELEGRAM_BOT_TOKEN=$BOT_TOKEN"
         echo "TELEGRAM_BOT_LIMIT_PERMISSION=$LIMIT_PERMISSION"
         echo "TELEGRAM_BOT_ALLOWED_USERNAMES=$ALLOWED_USERNAMES"
-        echo "TELEGRAM_BOT_ARIA2_RPC_URL=http://${IP_MAIN}:${PORT_RPC}/jsonrpc"
-        echo "TELEGRAM_BOT_ARIA2_RPC_SECRET=token:${SECRET_RPC}"
+        echo
+        echo "============================================================"
+        echo "==             DloadBox Internal Variables                =="
+        echo "============================================================"
+        echo "# Versions"
+        echo "VERSION_DLOADBOX=$VERSION_DLOADBOX"
+        echo "VERSION_DLOADBOX_CREATE=$VERSION_DLOADBOX_CREATE"
+        echo "VERSION_DLOADBOX_UPDATE=$VERSION_DLOADBOX_UPDATE"
+        echo "VERSION_FILEBROWSER=$VERSION_FILEBROWSER"
+        echo "VERSION_ARIANG=$VERSION_ARIANG"
+        echo "# Network"
+        echo "IP_MAIN=$IP_MAIN"
+        echo "# Aria2 config"
+        echo "INTERNALCONFIG_ARIA2_RPC_SECRET=$SECRET_RPC"
+        echo "INTERNALCONFIG_ARIA2_RPC_LISTEN_PORT=$PORT_RPC"
+        echo "# Telegram Bot Config"
+        echo "INTERNALCONFIG_TELEGRAMBOT_LIMIT_PERMISSION=$LIMIT_PERMISSION"
+        echo "INTERNALCONFIG_TELEGRAMBOT_ALLOWED_USERNAMES=$ALLOWED_USERNAMES"
+        echo "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_SECRET=token:$SECRET_RPC"
+        echo "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_URL=http://${IP_MAIN}:${PORT_RPC}/jsonrpc"
+        echo "INTERNALCONFIG_TELEGRAMBOT_BOT_TOKEN=$BOT_TOKEN"
+        echo "# Webserver config"
+        echo "INTERNALCONFIG_WEBSERVER_PORT=$PORT_WEBSERVER"
+        echo "# Filebrowser config"
+        echo "INTERNALCONFIG_FILEBROWSER_PASSWORD=$PASSWORD_FILEBROWSER"
+        echo "INTERNALCONFIG_FILEBROWSER_PASSWORD_HASH=$PASSWORD_FILEBROWSER_HASH"
+        echo "INTERNALCONFIG_FILEBROWSER_USERNAME=dloadboxadmin"
+        echo "INTERNALCONFIG_FILEBROWSER_PORT=$PORT_FILEBROWSER"
+        echo "# AriaNG config"
+        echo "INTERNALCONFIG_ARIANG_URL=$URL_ARIANG"
     } >> /opt/dloadbox/dloadbox-info
 }
 firewall_config() {
