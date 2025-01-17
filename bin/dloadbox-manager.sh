@@ -18,7 +18,7 @@ VERSION_ARIANG="1.3.8"
 URL_DLOADBOX_GITHUB="https://github.com/azolfaghar/dloadbox"
 URL_DLOADBOX_GITHUB_ISSUES="https://github.com/azolfaghar/dloadbox/issues"
 URL_DLOADBOX_LATEST_ZIP="https://github.com/azolfagharj/DloadBox/releases/download/$VERSION_DLOADBOX/dloadbox.zip"
-URL_FILEBROWSER_TARGZ="https://github.com/filebrowser/filebrowser/releases/download/$VERSION_FILEBROWSER/linux-amd64-filebrowser.tar.gz"
+URL_FILEBROWSER_TARGZ="https://github.com/filebrowser/filebrowser/releases/download/v$VERSION_FILEBROWSER/linux-amd64-filebrowser.tar.gz"
 URL_ARIANG_ZIP="https://github.com/mayswind/AriaNg/releases/download/$VERSION_ARIANG/AriaNg-$VERSION_ARIANG.zip"
 #endregion
 #region hierarchy

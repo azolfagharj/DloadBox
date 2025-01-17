@@ -128,7 +128,7 @@ init_bsics(){
     sleep 2
     PKG_DEP="tar wget curl make bzip2 gzip wget unzip sudo netcat"
     URL_DLOADBOX="https://github.com/azolfagharj/DloadBox/releases/download/$VERSION_DLOADBOX/dloadbox.zip"
-    URL_FILEBROWSER="https://github.com/filebrowser/filebrowser/releases/download/$VERSION_FILEBROWSER/linux-amd64-filebrowser.tar.gz"
+    URL_FILEBROWSER="https://github.com/filebrowser/filebrowser/releases/download/v$VERSION_FILEBROWSER/linux-amd64-filebrowser.tar.gz"
     URL_ARIANG="https://github.com/mayswind/AriaNg/releases/download/$VERSION_ARIANG/AriaNg-$VERSION_ARIANG.zip"
     DIR_INSTALL_SOURCE=$(dirname "$(realpath "$0")")/
     DIR_INSTALL_DEST="/opt/dloadbox/"
