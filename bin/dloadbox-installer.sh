@@ -127,9 +127,9 @@ init_bsics(){
     az_log b "Checking system requirements and preparing environment..."
     sleep 2
     PKG_DEP="tar wget curl make bzip2 gzip wget unzip sudo netcat"
-    URL_DLOADBOX="https://github.com/azolfagharj/DloadBox/releases/download/$VERSION_NUMBER/dloadbox.zip"
-    URL_FILEBROWSER="https://github.com/filebrowser/filebrowser/releases/download/v2.31.2/linux-amd64-filebrowser.tar.gz"
-    URL_ARIANG="https://github.com/mayswind/AriaNg/releases/download/1.3.8/AriaNg-1.3.8.zip"
+    URL_DLOADBOX="https://github.com/azolfagharj/DloadBox/releases/download/$VERSION_DLOADBOX/dloadbox.zip"
+    URL_FILEBROWSER="https://github.com/filebrowser/filebrowser/releases/download/$VERSION_FILEBROWSER/linux-amd64-filebrowser.tar.gz"
+    URL_ARIANG="https://github.com/mayswind/AriaNg/releases/download/$VERSION_ARIANG/AriaNg-$VERSION_ARIANG.zip"
     DIR_INSTALL_SOURCE=$(dirname "$(realpath "$0")")/
     DIR_INSTALL_DEST="/opt/dloadbox/"
     FILE_INSTALL_SCRIPT=$(basename "$0")
