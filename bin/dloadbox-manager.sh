@@ -4,7 +4,7 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 #region version
 # Version info
-VERSION_DLOADBOX="alpha-2.0.6"
+VERSION_DLOADBOX="alpha-2.0.8"
 VERSION_DLOADBOX_CREATE="2024-12-01"
 VERSION_DLOADBOX_UPDATE="2025-01-19"
 VERSION_FILEBROWSER="2.31.2"
@@ -235,7 +235,9 @@ az_log() {
 check_hierarchy(){
     clear
     setup_static_header
+    sleep 1
     az_log b "Checking DloadBox Files and Directories..."
+    sleep 1
     for item in "${hierarchy[@]}"; do
         if [[ ! -e "$item" ]]; then
             az_log br "Not found: $item"
@@ -366,7 +368,7 @@ main() {
     init_variables
     setup_static_header
     check_hierarchy
-    sleep 5
+    sleep 2
     if $CHECK_HIERARCHY_ISOK; then
         main_menu
     fi
