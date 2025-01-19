@@ -4,7 +4,7 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 
 # Version info
-VERSION_DLOADBOX="alpha-2.0.6"
+VERSION_DLOADBOX="alpha-2.0.7"
 VERSION_DLOADBOX_CREATE="2024-12-01"
 VERSION_DLOADBOX_UPDATE="2025-01-19"
 VERSION_FILEBROWSER="2.31.2"
@@ -1711,6 +1711,13 @@ install_dloadbox() {
     install_ariang
     az_log b "---------------------------------"
     sleep 2
+    if ln -s "$DIR_INSTALL_DEST/bin/dloadbox-manager.sh" /bin/dloadbox &>/dev/null; then
+        az_log bg "DloadBox manager link created successfully"
+    else
+        az_log br "There was an error in creating DloadBox manager link"
+        az_log br "Please open an issue in github"
+        sleep 3
+    fi
     az_log b "________________________________________________________________________"
     az_log b "Installation completed successfully"
     az_log b "Gathering information for you..."

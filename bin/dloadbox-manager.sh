@@ -233,6 +233,8 @@ az_log() {
     esac
 }
 check_hierarchy(){
+    clear
+    setup_static_header
     az_log b "Checking DloadBox Files and Directories..."
     for item in "${hierarchy[@]}"; do
         if [[ ! -e "$item" ]]; then
@@ -364,8 +366,9 @@ main() {
     init_variables
     setup_static_header
     check_hierarchy
-    main_menu
-
-
+    sleep 5
+    if $CHECK_HIERARCHY_ISOK; then
+        main_menu
+    fi
 }
 main
