@@ -4,7 +4,7 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 
 # Version info
-VERSION_DLOADBOX="alpha-2.0.5"
+VERSION_DLOADBOX="alpha-2.0.6"
 VERSION_DLOADBOX_CREATE="2024-12-01"
 VERSION_DLOADBOX_UPDATE="2025-01-19"
 VERSION_FILEBROWSER="2.31.2"
@@ -1683,6 +1683,7 @@ install_dloadbox() {
         if find "$DIR_INSTALL_DEST" -type d -exec chmod 755 {} \; &>/dev/null; then
             if find "$DIR_INSTALL_DEST" -type f -exec chmod 644 {} \; &>/dev/null; then
                 az_log bg "Permission have been successfully chenged"
+                chmod +x "$DIR_INSTALL_DEST/bin/dloadbox-manager.sh"
             fi
         fi
     else
