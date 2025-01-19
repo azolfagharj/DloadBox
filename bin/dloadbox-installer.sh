@@ -4,9 +4,9 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 
 # Version info
-VERSION_DLOADBOX="alpha-2.0.4"
+VERSION_DLOADBOX="alpha-2.0.5"
 VERSION_DLOADBOX_CREATE="2024-12-01"
-VERSION_DLOADBOX_UPDATE="2025-01-17"
+VERSION_DLOADBOX_UPDATE="2025-01-19"
 VERSION_FILEBROWSER="2.31.2"
 VERSION_ARIANG="1.3.8"
 # Log file
@@ -42,9 +42,9 @@ display_logo() {
 # Function to display header information
 display_header() {
     echo "===================================================="
-    echo " Version:   $VERSION_NUMBER                       "
-    echo " Since:     $VERSION_CREATE                       "
-    echo " Updated:   $VERSION_UPDATE                       "
+    echo " Version:   $VERSION_DLOADBOX                       "
+    echo " Since:     $VERSION_DLOADBOX_CREATE                "
+    echo " Updated:   $VERSION_DLOADBOX_UPDATE                "
     echo "===================================================="
     echo " Developer: A.Zolfaghar                             "
     echo " Email:     azolfagharj@gmail.com                   "
@@ -967,6 +967,7 @@ install_telegrambot() {
         case $choice in
             1)
                 LIMIT_PERMISSION=false
+                ALLOWED_USERNAMES="ALL"
                 az_log b "You chose: Anyone can use the bot"
                 break
                 ;;
@@ -1136,7 +1137,7 @@ show_dloadbox_info() {
         echo "VERSION_FILEBROWSER=$VERSION_FILEBROWSER"
         echo "VERSION_ARIANG=$VERSION_ARIANG"
         echo "# Network"
-        echo "IP_MAIN=$IP_MAIN"
+        echo "INTERNALCONFIG_IP_MAIN=$IP_MAIN"
         echo "# Aria2 config"
         echo "INTERNALCONFIG_ARIA2_RPC_SECRET=$SECRET_RPC"
         echo "INTERNALCONFIG_ARIA2_RPC_LISTEN_PORT=$PORT_RPC"

@@ -4,129 +4,165 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 #region version
 # Version info
-VERSION_DLOADBOX="alpha-2.0.4"
+VERSION_DLOADBOX="alpha-2.0.5"
 VERSION_DLOADBOX_CREATE="2024-12-01"
-VERSION_DLOADBOX_UPDATE="2025-01-17"
+VERSION_DLOADBOX_UPDATE="2025-01-19"
 VERSION_FILEBROWSER="2.31.2"
 VERSION_ARIANG="1.3.8"
 #endregion
-#region URL
-# ################################################################################## #
-# #                                   URL                                          # #
-# ################################################################################## #
-# DloadBox URL
-URL_DLOADBOX_GITHUB="https://github.com/azolfaghar/dloadbox"
-URL_DLOADBOX_GITHUB_ISSUES="https://github.com/azolfaghar/dloadbox/issues"
-URL_DLOADBOX_LATEST_ZIP="https://github.com/azolfagharj/DloadBox/releases/download/$VERSION_DLOADBOX/dloadbox.zip"
-URL_FILEBROWSER_TARGZ="https://github.com/filebrowser/filebrowser/releases/download/v$VERSION_FILEBROWSER/linux-amd64-filebrowser.tar.gz"
-URL_ARIANG_ZIP="https://github.com/mayswind/AriaNg/releases/download/$VERSION_ARIANG/AriaNg-$VERSION_ARIANG.zip"
-#endregion
-#region hierarchy
-# ################################################################################## #
-# #                               DloadBox Hierarchy                               # #
-# ################################################################################## #
-# Info file
-file_dloadbox_info="/opt/dloadbox/dloadbox-info"
-# Config files
-file_config_aria2="/opt/dloadbox/config/dloadbox-aria2.conf"
-file_config_webserver="/opt/dloadbox/config/dloadbox-lighttpd.conf"
-file_config_telegram_bot="/opt/dloadbox/config/dloadbox-telegram-bot.conf"
-file_config_filebrowser_json="/opt/dloadbox/config/dloadbox-filebrowser.json"
-file_config_filebrowser_db="/opt/dloadbox/config/dloadbox-filebrowser.db"
-# Services files
-file_service_ariarpc="/opt/dloadbox/services/dloadbox-aria2rpc.service"
-file_service_webserver="/opt/dloadbox/services/dloadbox-lighttpd.service"
-file_service_telegram_bot="/opt/dloadbox/services/dloadbox-telegram.service"
-file_service_filebrowser="/opt/dloadbox/services/dloadbox-filebrowser.service"
-# Binaries
-file_bin_aria2c="/usr/bin/aria2c"
-file_bin_lighttpd="/usr/sbin/lighttpd"
-file_bin_telegram_bot="/opt/dloadbox/bin/dloadbox-telegrambot.py"
-file_bin_filebrowser="/opt/dloadbox/bin/dloadbox-filebrowser"
-file_bin_dloadbox_manager="/opt/dloadbox/bin/dloadbox-manager.sh"
-file_bin_dloadbox_installer="/opt/dloadbox/bin/dloadbox-installer.sh"
-# Symbolic links
-symb_config_webserver="/etc/lighttpd/conf-enabled/dloadbox-lighttpd.conf"
-symb_service_ariarpc="/etc/systemd/system/dloadbox-ariarpc.service"
-symb_service_filebrowser="/etc/systemd/system/dloadbox-filebrowser.service"
-symb_service_telegram_bot="/etc/systemd/system/dloadbox-telegram.service"
-symb_bin_filebrowser="/usr/bin/dloadbox-filebrowser"
-# Directories
-dir_dloadbox="/opt/dloadbox"
-dir_bin="/opt/dloadbox/bin"
-dir_config="/opt/dloadbox/config"
-dir_services="/opt/dloadbox/services"
-dir_log="/opt/dloadbox/log"
-dir_www="/opt/dloadbox/www"
-dir_venv="/opt/dloadbox/venv"
-dir_venv_telegrambot="/opt/dloadbox/venv/telegrambot"
-#endregion
-#region variables
-# ################################################################################## #
-# #                               DloadBox Variables                               # #
-# ################################################################################## #
-# Secrets variables
-SECRET_ARIA2_RPCTOKEN=""
-SECRET_ARIA2_RPCTOKEN_HASH=""
-SECRET_TELEGRAM_BOT_TOKEN=""
-SECRET_FILEBROWSER_PASSWORD=""
-SECRET_FILEBROWSER_PASSWORD_HASH=""
-# User variables
-USERNAME_FILEBROWSER=""
-USERNAME_TELEGRAM_BOT=""
-USERNAME_TELEGRAM_ALLOWED=""
-# Network variables
-IP_MAIN=""
-PORT_RPC=""
-PORT_WEBSERVER=""
-PORT_FILEBROWSER=""
-# Services variables
-SERVICE_ARIARPC=""
-SERVICE_FILEBROWSER=""
-SERVICE_TELEGRAM_BOT=""
-#endregion
-#region InternalConfig
-# ################################################################################## #
-# #                               DloadBox Internal Config                       # #
-# ################################################################################## #
-# Aria2 config
-INTERNALCONFIG_ARIA2_RPC_SECRET=""
-INTERNALCONFIG_ARIA2_RPC_LISTEN_PORT=""
-# telegram bot config
-INTERNALCONFIG_TELEGRAMBOT_LIMIT_PERMISSION=""
-INTERNALCONFIG_TELEGRAMBOT_ALLOWED_USERNAMES=""
-INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_SECRET=""
-INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_URL=""
-INTERNALCONFIG_TELEGRAMBOT_BOT_TOKEN=""
-# Webserver config
-INTERNALCONFIG_WEBSERVER_PORT=""
-# Filebrowser config
-INTERNALCONFIG_FILEBROWSER_PASSWORD=""
-INTERNALCONFIG_FILEBROWSER_PASSWORD_HASH=""
-INTERNALCONFIG_FILEBROWSER_USERNAME=""
-INTERNALCONFIG_FILEBROWSER_PORT=""
-# AriaNG config
-INTERNALCONFIG_ARIANG_URL=""
-#endregion
-#region Log
-# ################################################################################## #
-# #                               DloadBox Log                                     # #
-# ################################################################################## #
-# Log file
-LOG_FILE="/opt/dloadbox/log/dloadbox-manager.log"
-# Define colors
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-# shellcheck disable=SC2034
-ORANGE='\033[0;33m'
-RED='\033[0;31m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-NC='\033[0m'
-BOLD='\033[1m'
-# date format
-DATE_FORMAT='+%Y-%m-%d %H:%M:%S'
-#endregion
+init_variables(){
+    #region URL
+    # ################################################################################## #
+    # #                                   URL                                          # #
+    # ################################################################################## #
+    # DloadBox URL
+    URL_DLOADBOX_GITHUB="https://github.com/azolfaghar/dloadbox"
+    URL_DLOADBOX_GITHUB_ISSUES="https://github.com/azolfaghar/dloadbox/issues"
+    URL_DLOADBOX_LATEST_ZIP="https://github.com/azolfagharj/DloadBox/releases/download/$VERSION_DLOADBOX/dloadbox.zip"
+    URL_FILEBROWSER_TARGZ="https://github.com/filebrowser/filebrowser/releases/download/v$VERSION_FILEBROWSER/linux-amd64-filebrowser.tar.gz"
+    URL_ARIANG_ZIP="https://github.com/mayswind/AriaNg/releases/download/$VERSION_ARIANG/AriaNg-$VERSION_ARIANG.zip"
+    #endregion
+    #region hierarchy
+    # ################################################################################## #
+    # #                               DloadBox Hierarchy                               # #
+    # ################################################################################## #
+    # Info file
+    file_dloadbox_info="/opt/dloadbox/dloadbox-info"
+    # Config files
+    file_config_aria2="/opt/dloadbox/config/dloadbox-aria2.conf"
+    file_config_webserver="/opt/dloadbox/config/dloadbox-lighttpd.conf"
+    file_config_telegram_bot="/opt/dloadbox/config/dloadbox-telegram-bot.conf"
+    file_config_filebrowser_json="/opt/dloadbox/config/dloadbox-filebrowser.json"
+    file_config_filebrowser_db="/opt/dloadbox/config/dloadbox-filebrowser.db"
+    # Services files
+    file_service_ariarpc="/opt/dloadbox/services/dloadbox-aria2rpc.service"
+    file_service_webserver="/opt/dloadbox/services/dloadbox-lighttpd.service"
+    file_service_telegram_bot="/opt/dloadbox/services/dloadbox-telegram.service"
+    file_service_filebrowser="/opt/dloadbox/services/dloadbox-filebrowser.service"
+    # Binaries
+    file_bin_aria2c="/usr/bin/aria2c"
+    file_bin_lighttpd="/usr/sbin/lighttpd"
+    file_bin_telegram_bot="/opt/dloadbox/bin/dloadbox-telegrambot.py"
+    file_bin_filebrowser="/opt/dloadbox/bin/dloadbox-filebrowser"
+    file_bin_dloadbox_manager="/opt/dloadbox/bin/dloadbox-manager.sh"
+    file_bin_dloadbox_installer="/opt/dloadbox/bin/dloadbox-installer.sh"
+    # Symbolic links
+    symb_config_webserver="/etc/lighttpd/conf-enabled/dloadbox-lighttpd.conf"
+    symb_service_ariarpc="/etc/systemd/system/dloadbox-ariarpc.service"
+    symb_service_filebrowser="/etc/systemd/system/dloadbox-filebrowser.service"
+    symb_service_telegram_bot="/etc/systemd/system/dloadbox-telegram.service"
+    symb_bin_filebrowser="/usr/bin/dloadbox-filebrowser"
+    # Directories
+    dir_dloadbox="/opt/dloadbox"
+    dir_bin="/opt/dloadbox/bin"
+    dir_config="/opt/dloadbox/config"
+    dir_services="/opt/dloadbox/services"
+    dir_log="/opt/dloadbox/log"
+    dir_www="/opt/dloadbox/www"
+    dir_venv="/opt/dloadbox/venv"
+    dir_venv_telegrambot="/opt/dloadbox/venv/telegrambot"
+    # dloadbox hierarchy array
+    hierarchy=(
+        "$file_dloadbox_info"
+        "$file_config_aria2"
+        "$file_config_webserver"
+        "$file_config_telegram_bot"
+        "$file_config_filebrowser_json"
+        "$file_config_filebrowser_db"
+        "$file_service_ariarpc"
+        "$file_service_webserver"
+        "$file_service_telegram_bot"
+        "$file_service_filebrowser"
+        "$file_bin_aria2c"
+        "$file_bin_lighttpd"
+        "$file_bin_telegram_bot"
+        "$file_bin_filebrowser"
+        "$file_bin_dloadbox_manager"
+        "$file_bin_dloadbox_installer"
+        "$symb_config_webserver"
+        "$symb_service_ariarpc"
+        "$symb_service_filebrowser"
+        "$symb_service_telegram_bot"
+        "$symb_bin_filebrowser"
+        "$dir_dloadbox"
+        "$dir_bin"
+        "$dir_config"
+        "$dir_services"
+        "$dir_log"
+        "$dir_www"
+        "$dir_venv"
+        "$dir_venv_telegrambot"
+    )
+    #endregion
+    #region variables
+    # ################################################################################## #
+    # #                               DloadBox Variables                               # #
+    # ################################################################################## #
+    # Secrets variables
+    SECRET_ARIA2_RPCTOKEN=""
+    SECRET_ARIA2_RPCTOKEN_HASH=""
+    SECRET_TELEGRAM_BOT_TOKEN=""
+    SECRET_FILEBROWSER_PASSWORD=""
+    SECRET_FILEBROWSER_PASSWORD_HASH=""
+    # User variables
+    USERNAME_FILEBROWSER=""
+    USERNAME_TELEGRAM_BOT=""
+    USERNAME_TELEGRAM_ALLOWED=""
+    # Network variables
+    IP_MAIN=""
+    PORT_RPC=""
+    PORT_WEBSERVER=""
+    PORT_FILEBROWSER=""
+    # Services variables
+    SERVICE_ARIARPC=""
+    SERVICE_FILEBROWSER=""
+    SERVICE_TELEGRAM_BOT=""
+    # check variables
+    CHECK_HIERARCHY_ISOK=true
+    #endregion
+    #region InternalConfig
+    # ################################################################################## #
+    # #                               DloadBox Internal Config                       # #
+    # ################################################################################## #
+    # Aria2 config
+    INTERNALCONFIG_ARIA2_RPC_SECRET=""
+    INTERNALCONFIG_ARIA2_RPC_LISTEN_PORT=""
+    # telegram bot config
+    INTERNALCONFIG_TELEGRAMBOT_LIMIT_PERMISSION=""
+    INTERNALCONFIG_TELEGRAMBOT_ALLOWED_USERNAMES=""
+    INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_SECRET=""
+    INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_URL=""
+    INTERNALCONFIG_TELEGRAMBOT_BOT_TOKEN=""
+    # Webserver config
+    INTERNALCONFIG_WEBSERVER_PORT=""
+    # Filebrowser config
+    INTERNALCONFIG_FILEBROWSER_PASSWORD=""
+    INTERNALCONFIG_FILEBROWSER_PASSWORD_HASH=""
+    INTERNALCONFIG_FILEBROWSER_USERNAME=""
+    INTERNALCONFIG_FILEBROWSER_PORT=""
+    # AriaNG config
+    INTERNALCONFIG_ARIANG_URL=""
+    #endregion
+    #region Log
+    # ################################################################################## #
+    # #                               DloadBox Log                                     # #
+    # ################################################################################## #
+    # Log file
+    LOG_FILE="/opt/dloadbox/log/dloadbox-manager.log"
+    # Define colors
+    GREEN='\033[0;32m'
+    YELLOW='\033[1;33m'
+    # shellcheck disable=SC2034
+    ORANGE='\033[0;33m'
+    RED='\033[0;31m'
+    BLUE='\033[0;34m'
+    CYAN='\033[0;36m'
+    NC='\033[0m'
+    BOLD='\033[1m'
+    # date format
+    DATE_FORMAT='+%Y-%m-%d %H:%M:%S'
+    #endregion
+}
 display_logo() {
     echo ""
     echo -e "                ${BLUE}██████╗ ${GREEN}██╗      ██████╗  █████╗ ██████╗ ${CYAN}██████╗  ██████╗ ██╗  ██╗${NC}"
@@ -194,7 +230,21 @@ az_log() {
             ;;
     esac
 }
-
+check_hierarchy(){
+    az_log b "Checking DloadBox Files and Directories..."
+    for item in "${hierarchy[@]}"; do
+        if [[ ! -e "$item" ]]; then
+            az_log br "Not found: $item"
+            CHECK_HIERARCHY_ISOK=false
+        fi
+    done
+    if $CHECK_HIERARCHY_ISOK; then
+        az_log bg "ALL DloadBox Files and Directories Found"
+    else
+        az_log br "Some DloadBox Files and Directories are missing"
+        return 1
+    fi
+}
 config_detector_ip(){
     az_log b "Detecting IP address..."
     if INTERFACE_MAIN=$(ip route | awk '/default/ {print $5}' | head -n 1); then
@@ -309,7 +359,9 @@ services_menu() {
     esac
 }
 main() {
+    init_variables
     setup_static_header
+    check_hierarchy
     main_menu
 
 
