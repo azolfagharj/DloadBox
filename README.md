@@ -7,6 +7,7 @@
 ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═════╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝
                 Full Download and File Manager Platform
                                     ‌by  A.ZOLFAGHAR
+<meta name="google-site-verification" content="7XI30vdTolv913bsOcAnWPGwUJr8QoEgWcDzkbip8kU" />                                    
 ```
 # DloadBox
 DloadBox is a complete download management platform combining **aria2c**, **Lighttpd**, **ariaNG**, **RPC** integration, and a **Telegram bot**. It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
