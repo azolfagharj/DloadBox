@@ -4,7 +4,7 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 #region version
 # Version info
-VERSION_DLOADBOX="alpha-2.0.8"
+VERSION_DLOADBOX="alpha-2.0.9"
 VERSION_DLOADBOX_CREATE="2024-12-01"
 VERSION_DLOADBOX_UPDATE="2025-01-19"
 VERSION_FILEBROWSER="2.31.2"
@@ -53,6 +53,7 @@ init_variables(){
     symb_service_filebrowser="/etc/systemd/system/dloadbox-filebrowser.service"
     symb_service_telegram_bot="/etc/systemd/system/dloadbox-telegram.service"
     symb_bin_filebrowser="/usr/bin/dloadbox-filebrowser"
+    symb_bin_dloadbox="/bin/dloadbox"
     # Directories
     dir_dloadbox="/opt/dloadbox"
     dir_bin="/opt/dloadbox/bin"
@@ -86,6 +87,7 @@ init_variables(){
         "$symb_service_filebrowser"
         "$symb_service_telegram_bot"
         "$symb_bin_filebrowser"
+        "$symb_bin_dloadbox"
         "$dir_dloadbox"
         "$dir_bin"
         "$dir_config"
