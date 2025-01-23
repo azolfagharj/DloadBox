@@ -4,9 +4,9 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 #region version
 # Version info
-VERSION_DLOADBOX="alpha-2.0.9"
+VERSION_DLOADBOX="alpha-2.1.0"
 VERSION_DLOADBOX_CREATE="2024-12-01"
-VERSION_DLOADBOX_UPDATE="2025-01-19"
+VERSION_DLOADBOX_UPDATE="2025-01-23"
 VERSION_FILEBROWSER="2.31.2"
 VERSION_ARIANG="1.3.8"
 #endregion
@@ -253,6 +253,57 @@ check_hierarchy(){
         return 1
     fi
 }
+config_detector_info(){
+    az_log b "Detecting dloadbox-info Config..."
+    local detected_config=true
+    if [ -f "$file_dloadbox_info" ]; then
+        # Create arrays for the keys and corresponding variable names
+        config_keys=("INTERNALCONFIG_IP_MAIN" "INTERNALCONFIG_ARIA2_RPC_SECRET" "INTERNALCONFIG_ARIA2_RPC_LISTEN_PORT" "INTERNALCONFIG_TELEGRAMBOT_LIMIT_PERMISSION" "INTERNALCONFIG_TELEGRAMBOT_ALLOWED_USERNAMES" "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_SECRET" "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_URL" "INTERNALCONFIG_TELEGRAMBOT_BOT_TOKEN" "INTERNALCONFIG_WEBSERVER_PORT" "INTERNALCONFIG_FILEBROWSER_PASSWORD" "INTERNALCONFIG_FILEBROWSER_PASSWORD_HASH" "INTERNALCONFIG_FILEBROWSER_USERNAME" "INTERNALCONFIG_FILEBROWSER_PORT" "INTERNALCONFIG_ARIANG_URL")
+        config_vars=("INTERNALCONFIG_IP_MAIN" "INTERNALCONFIG_ARIA2_RPC_SECRET" "INTERNALCONFIG_ARIA2_RPC_LISTEN_PORT" "INTERNALCONFIG_TELEGRAMBOT_LIMIT_PERMISSION" "INTERNALCONFIG_TELEGRAMBOT_ALLOWED_USERNAMES" "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_SECRET" "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_URL" "INTERNALCONFIG_TELEGRAMBOT_BOT_TOKEN" "INTERNALCONFIG_WEBSERVER_PORT" "INTERNALCONFIG_FILEBROWSER_PASSWORD" "INTERNALCONFIG_FILEBROWSER_PASSWORD_HASH" "INTERNALCONFIG_FILEBROWSER_USERNAME" "INTERNALCONFIG_FILEBROWSER_PORT" "INTERNALCONFIG_ARIANG_URL")
+
+        # Loop through the keys and extract values
+        for i in "${!config_keys[@]}"; do
+            key="${config_keys[$i]}"
+            var="${config_vars[$i]}"
+            value=$(grep -i "$key" "$file_dloadbox_info" | awk -F'=' '{print $2}')
+
+            if [ -z "$value" ]; then
+                az_log br "Error: Unable to retrieve $key"
+                detected_config=false
+            else
+                eval "$var=\"$value\""
+                az_log l "$key extracted successfully."
+            fi
+        done
+
+        az_log b "dloadbox-info file configuration Successfully extracted."
+    else
+        az_log br "Error: $file_dloadbox_info not found."
+        detected_config=false
+    fi
+    if [[ "$detected_config" == "true" ]]; then
+        az_log bg "All DloadBox Config  successfully detected from dloadbox-info file."
+        return 0
+    else
+        az_log br "Error: Unable to retrieve all DloadBox config from dloadbox-info file."
+        return 1
+    fi
+}
+config_detector_ip(){
+    az_log b "Detecting IP address..."
+    if INTERFACE_MAIN=$(ip route | awk '/default/ {print $5}' | head -n 1); then
+        az_log b "Main interface is: $INTERFACE_MAIN"
+        if IP_MAIN=$(ip addr show "$INTERFACE_MAIN" | awk '/inet / {print $2}' | cut -d/ -f1 | head -n 1); then
+            az_log b " IP is: $IP_MAIN"
+        else
+            az_log br "Error: Unable to retrieve the main IP."
+            return 1
+        fi
+    else
+        az_log br "Error: Unable to retrieve the main interface."
+        return 1
+    fi
+}
 config_detector_ip(){
     az_log b "Detecting IP address..."
     if INTERFACE_MAIN=$(ip route | awk '/default/ {print $5}' | head -n 1); then
@@ -270,10 +321,80 @@ config_detector_ip(){
 }
 config_detector_aria2(){
     az_log b "Detecting aria2 rpc config..."
-    if SECRET_ARIA2_RPCTOKEN=$(grep -i rpc-secret "$file_config_aria2" | awk -F'=' '{print $2}'); then
-        az_log b "Aria2 rpc secret extracted successfully."
+    if [ -f "$file_config_aria2" ]; then
+        if SECRET_ARIA2_RPCTOKEN=$(grep -i rpc-secret "$file_config_aria2" | awk -F'=' '{print $2}'); then
+            az_log b "Aria2 rpc secret extracted successfully."
+        else
+            az_log br "Error: Unable to retrieve the aria2 rpc secret."
+            return 1
+        fi
     else
-        az_log br "Error: Unable to retrieve the aria2 rpc secret."
+        az_log br "Error: $file_config_aria2 not found."
+        return 1
+    fi
+
+}
+config_detector_telegrambot(){
+    az_log b "Detecting telegram bot config..."
+    if [ -f "$file_config_telegram_bot" ]; then
+        if SECRET_TELEGRAM_BOT_TOKEN=$(grep -i BOT_TOKEN "$file_config_telegram_bot" | awk -F'=' '{print $2}'); then
+            az_log b "Telegram bot token extracted successfully."
+            if CONFIG_TELEGRAM_BOT_LIMIT_PERMISSION=$(grep -i LIMIT_PERMISSION "$file_config_telegram_bot" | awk -F'=' '{print $2}'); then
+                az_log b "Telegram bot limit permission extracted successfully."
+            else
+                az_log br "Error: Unable to retrieve the telegram bot limit permission."
+                return 1
+            fi
+        else
+            az_log br "Error: Unable to retrieve the telegram bot token."
+            return 1
+        fi
+    else
+        az_log br "Error: $file_config_telegram_bot not found."
+        return 1
+    fi
+}
+config_detector_filebrowser(){
+    az_log b "Detecting filebrowser config..."
+    if [ -f "$file_config_filebrowser_json" ]; then
+        if SECRET_FILEBROWSER_PASSWORD_HASH=$(grep -i password "$file_config_filebrowser_json" |  awk -F'"' '{print $4}'); then
+            az_log b "Filebrowser password extracted successfully."
+            if USERNAME_FILEBROWSER=$(grep -i username "$file_config_filebrowser_json" | awk -F'"' '{print $4}'); then
+                az_log b "Filebrowser username extracted successfully."
+            else
+                az_log br "Error: Unable to retrieve the filebrowser username."
+                return 1
+            fi
+        else
+            az_log br "Error: Unable to retrieve the filebrowser password."
+            return 1
+        fi
+    else
+        az_log br "Error: $file_config_filebrowser_json not found."
+        return 1
+    fi
+}
+config_detector_webserver(){
+    az_log b "Detecting webserver config..."
+    if [ -f "$file_config_webserver" ]; then
+        if PORT_WEBSERVER=$(grep -i server.port "$file_config_webserver" | awk -F'=' '{print substr($2, 2)}'); then
+            az_log b "Webserver port extracted successfully."
+        else
+            az_log br "Error: Unable to retrieve the webserver port."
+            return 1
+        fi
+    else
+        az_log br "Error: $file_config_webserver not found."
+        return 1
+    fi
+}
+config_detector_all(){
+    az_log b "Detecting all DloadBox config..."
+    if [[ $(config_detector_ip) && $(config_detector_aria2) && $(config_detector_telegrambot) && $(config_detector_filebrowser) && $(config_detector_webserver) ]]; then
+        az_log b "All DloadBox Config detected successfully."
+        return 0
+    else
+        az_log br "Error: Unable to retrieve all DloadBox config."
         return 1
     fi
 }
