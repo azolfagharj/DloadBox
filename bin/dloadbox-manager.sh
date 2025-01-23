@@ -4,7 +4,7 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 #region version
 # Version info
-VERSION_DLOADBOX="alpha-2.1.0"
+VERSION_DLOADBOX="alpha-2.1.1"
 VERSION_DLOADBOX_CREATE="2024-12-01"
 VERSION_DLOADBOX_UPDATE="2025-01-23"
 VERSION_FILEBROWSER="2.31.2"
@@ -102,25 +102,33 @@ init_variables(){
     # ################################################################################## #
     # #                               DloadBox Variables                               # #
     # ################################################################################## #
-    # Secrets variables
-    SECRET_ARIA2_RPCTOKEN=""
-    SECRET_ARIA2_RPCTOKEN_HASH=""
-    SECRET_TELEGRAM_BOT_TOKEN=""
-    SECRET_FILEBROWSER_PASSWORD=""
-    SECRET_FILEBROWSER_PASSWORD_HASH=""
-    # User variables
-    USERNAME_FILEBROWSER=""
-    USERNAME_TELEGRAM_BOT=""
-    USERNAME_TELEGRAM_ALLOWED=""
-    # Network variables
-    IP_MAIN=""
-    PORT_RPC=""
-    PORT_WEBSERVER=""
-    PORT_FILEBROWSER=""
-    # Services variables
-    SERVICE_ARIARPC=""
-    SERVICE_FILEBROWSER=""
-    SERVICE_TELEGRAM_BOT=""
+    # IP config
+    CONFIG_IP_MAIN=""
+    CONFIG_INTERFACE_MAIN=""
+    # Aria2 config
+    CONFIG_ARIA2_RPC_SECRET=""
+    CONFIG_ARIA2_RPC_LISTEN_PORT=""
+    # Telegram bot config
+    CONFIG_TELEGRAMBOT_LIMIT_PERMISSION=""
+    CONFIG_TELEGRAMBOT_ALLOWED_USERNAMES=""
+    CONFIG_TELEGRAMBOT_ARIA2_RPC_SECRET=""
+    CONFIG_TELEGRAMBOT_ARIA2_RPC_URL=""
+    CONFIG_TELEGRAMBOT_BOT_TOKEN=""
+    CONFIG_TELEGRAMBOT_BOT_USERNAME=""
+    # Webserver config
+    CONFIG_WEBSERVER_PORT=""
+    # Filebrowser config
+    CONFIG_FILEBROWSER_PASSWORD=""
+    CONFIG_FILEBROWSER_PASSWORD_HASH=""
+    CONFIG_FILEBROWSER_USERNAME=""
+    CONFIG_FILEBROWSER_PORT=""
+    # AriaNG config
+    CONFIG_ARIANG_URL=""
+    CONFIG_ARIANG_RPC_SECRET_HASH=""
+    # Services name variables
+    CONFIG_SERVICE_NAME_ARIARPC=""
+    CONFIG_SERVICE_NAME_FILEBROWSER=""
+    CONFIG_SERVICE_NAME_TELEGRAM=""
     # check variables
     CHECK_HIERARCHY_ISOK=true
     #endregion
@@ -128,6 +136,9 @@ init_variables(){
     # ################################################################################## #
     # #                               DloadBox Internal Config                       # #
     # ################################################################################## #
+    # IP config
+    INTERNALCONFIG_IP_MAIN=""
+    INTERNALCONFIG_INTERFACE_MAIN=""
     # Aria2 config
     INTERNALCONFIG_ARIA2_RPC_SECRET=""
     INTERNALCONFIG_ARIA2_RPC_LISTEN_PORT=""
@@ -137,6 +148,7 @@ init_variables(){
     INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_SECRET=""
     INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_URL=""
     INTERNALCONFIG_TELEGRAMBOT_BOT_TOKEN=""
+    INTERNALCONFIG_TELEGRAMBOT_BOT_USERNAME=""
     # Webserver config
     INTERNALCONFIG_WEBSERVER_PORT=""
     # Filebrowser config
@@ -146,6 +158,11 @@ init_variables(){
     INTERNALCONFIG_FILEBROWSER_PORT=""
     # AriaNG config
     INTERNALCONFIG_ARIANG_URL=""
+    INTERNALCONFIG_ARIANG_RPC_SECRET_HASH=""
+    # Services name variables
+    INTERNALCONFIG_SERVICE_NAME_ARIARPC=""
+    INTERNALCONFIG_SERVICE_NAME_FILEBROWSER=""
+    INTERNALCONFIG_SERVICE_NAME_TELEGRAM=""
     #endregion
     #region Log
     # ################################################################################## #
@@ -258,24 +275,22 @@ config_detector_info(){
     local detected_config=true
     if [ -f "$file_dloadbox_info" ]; then
         # Create arrays for the keys and corresponding variable names
-        config_keys=("INTERNALCONFIG_IP_MAIN" "INTERNALCONFIG_ARIA2_RPC_SECRET" "INTERNALCONFIG_ARIA2_RPC_LISTEN_PORT" "INTERNALCONFIG_TELEGRAMBOT_LIMIT_PERMISSION" "INTERNALCONFIG_TELEGRAMBOT_ALLOWED_USERNAMES" "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_SECRET" "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_URL" "INTERNALCONFIG_TELEGRAMBOT_BOT_TOKEN" "INTERNALCONFIG_WEBSERVER_PORT" "INTERNALCONFIG_FILEBROWSER_PASSWORD" "INTERNALCONFIG_FILEBROWSER_PASSWORD_HASH" "INTERNALCONFIG_FILEBROWSER_USERNAME" "INTERNALCONFIG_FILEBROWSER_PORT" "INTERNALCONFIG_ARIANG_URL")
-        config_vars=("INTERNALCONFIG_IP_MAIN" "INTERNALCONFIG_ARIA2_RPC_SECRET" "INTERNALCONFIG_ARIA2_RPC_LISTEN_PORT" "INTERNALCONFIG_TELEGRAMBOT_LIMIT_PERMISSION" "INTERNALCONFIG_TELEGRAMBOT_ALLOWED_USERNAMES" "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_SECRET" "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_URL" "INTERNALCONFIG_TELEGRAMBOT_BOT_TOKEN" "INTERNALCONFIG_WEBSERVER_PORT" "INTERNALCONFIG_FILEBROWSER_PASSWORD" "INTERNALCONFIG_FILEBROWSER_PASSWORD_HASH" "INTERNALCONFIG_FILEBROWSER_USERNAME" "INTERNALCONFIG_FILEBROWSER_PORT" "INTERNALCONFIG_ARIANG_URL")
+        local config_keys=("INTERNALCONFIG_IP_MAIN" "INTERNALCONFIG_INTERFACE_MAIN" "INTERNALCONFIG_ARIA2_RPC_SECRET" "INTERNALCONFIG_ARIA2_RPC_LISTEN_PORT" "INTERNALCONFIG_TELEGRAMBOT_LIMIT_PERMISSION" "INTERNALCONFIG_TELEGRAMBOT_ALLOWED_USERNAMES" "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_SECRET" "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_URL" "INTERNALCONFIG_TELEGRAMBOT_BOT_TOKEN" "INTERNALCONFIG_WEBSERVER_PORT" "INTERNALCONFIG_FILEBROWSER_PASSWORD" "INTERNALCONFIG_FILEBROWSER_PASSWORD_HASH" "INTERNALCONFIG_FILEBROWSER_USERNAME" "INTERNALCONFIG_FILEBROWSER_PORT" "INTERNALCONFIG_ARIANG_URL")
+        local config_vars=("INTERNALCONFIG_IP_MAIN" "INTERNALCONFIG_INTERFACE_MAIN" "INTERNALCONFIG_ARIA2_RPC_SECRET" "INTERNALCONFIG_ARIA2_RPC_LISTEN_PORT" "INTERNALCONFIG_TELEGRAMBOT_LIMIT_PERMISSION" "INTERNALCONFIG_TELEGRAMBOT_ALLOWED_USERNAMES" "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_SECRET" "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_URL" "INTERNALCONFIG_TELEGRAMBOT_BOT_TOKEN" "INTERNALCONFIG_WEBSERVER_PORT" "INTERNALCONFIG_FILEBROWSER_PASSWORD" "INTERNALCONFIG_FILEBROWSER_PASSWORD_HASH" "INTERNALCONFIG_FILEBROWSER_USERNAME" "INTERNALCONFIG_FILEBROWSER_PORT" "INTERNALCONFIG_ARIANG_URL")
 
         # Loop through the keys and extract values
         for i in "${!config_keys[@]}"; do
             key="${config_keys[$i]}"
             var="${config_vars[$i]}"
-            value=$(grep -i "$key" "$file_dloadbox_info" | awk -F'=' '{print $2}')
-
+            value=$(grep -iw "$key" "$file_dloadbox_info" | awk -F'=' '{print $2}' 2>/dev/null)
             if [ -z "$value" ]; then
                 az_log br "Error: Unable to retrieve $key"
                 detected_config=false
             else
                 eval "$var=\"$value\""
-                az_log l "$key extracted successfully."
+                az_log b "$key extracted successfully: $value"
             fi
         done
-
         az_log b "dloadbox-info file configuration Successfully extracted."
     else
         az_log br "Error: $file_dloadbox_info not found."
@@ -289,27 +304,15 @@ config_detector_info(){
         return 1
     fi
 }
+
 config_detector_ip(){
     az_log b "Detecting IP address..."
+    INTERFACE_MAIN=""
+    CONFIG_IP_MAIN=""
     if INTERFACE_MAIN=$(ip route | awk '/default/ {print $5}' | head -n 1); then
         az_log b "Main interface is: $INTERFACE_MAIN"
-        if IP_MAIN=$(ip addr show "$INTERFACE_MAIN" | awk '/inet / {print $2}' | cut -d/ -f1 | head -n 1); then
-            az_log b " IP is: $IP_MAIN"
-        else
-            az_log br "Error: Unable to retrieve the main IP."
-            return 1
-        fi
-    else
-        az_log br "Error: Unable to retrieve the main interface."
-        return 1
-    fi
-}
-config_detector_ip(){
-    az_log b "Detecting IP address..."
-    if INTERFACE_MAIN=$(ip route | awk '/default/ {print $5}' | head -n 1); then
-        az_log b "Main interface is: $INTERFACE_MAIN"
-        if IP_MAIN=$(ip addr show "$INTERFACE_MAIN" | awk '/inet / {print $2}' | cut -d/ -f1 | head -n 1); then
-            az_log b " IP is: $IP_MAIN"
+        if CONFIG_IP_MAIN=$(ip addr show "$INTERFACE_MAIN" | awk '/inet / {print $2}' | cut -d/ -f1 | head -n 1); then
+            az_log b " IP is: $CONFIG_IP_MAIN"
         else
             az_log br "Error: Unable to retrieve the main IP."
             return 1
@@ -321,9 +324,15 @@ config_detector_ip(){
 }
 config_detector_aria2(){
     az_log b "Detecting aria2 rpc config..."
+    CONFIG_ARIA2_RPC_SECRET=""
     if [ -f "$file_config_aria2" ]; then
-        if SECRET_ARIA2_RPCTOKEN=$(grep -i rpc-secret "$file_config_aria2" | awk -F'=' '{print $2}'); then
-            az_log b "Aria2 rpc secret extracted successfully."
+        if CONFIG_ARIA2_RPC_SECRET=$(grep -i rpc-secret "$file_config_aria2" | awk -F'=' '{print $2}'); then
+            if [[ -n "$CONFIG_ARIA2_RPC_SECRET" ]]; then
+                az_log b "Aria2 rpc secret extracted successfully."
+            else
+                az_log br "Error: Unable to retrieve the aria2 rpc secret."
+                return 1
+            fi
         else
             az_log br "Error: Unable to retrieve the aria2 rpc secret."
             return 1
@@ -336,13 +345,26 @@ config_detector_aria2(){
 }
 config_detector_telegrambot(){
     az_log b "Detecting telegram bot config..."
+    CONFIG_TELEGRAMBOT_BOT_TOKEN=""
+    CONFIG_TELEGRAM_BOT_LIMIT_PERMISSION=""
     if [ -f "$file_config_telegram_bot" ]; then
-        if SECRET_TELEGRAM_BOT_TOKEN=$(grep -i BOT_TOKEN "$file_config_telegram_bot" | awk -F'=' '{print $2}'); then
-            az_log b "Telegram bot token extracted successfully."
-            if CONFIG_TELEGRAM_BOT_LIMIT_PERMISSION=$(grep -i LIMIT_PERMISSION "$file_config_telegram_bot" | awk -F'=' '{print $2}'); then
-                az_log b "Telegram bot limit permission extracted successfully."
+        if CONFIG_TELEGRAMBOT_BOT_TOKEN=$(grep -i BOT_TOKEN "$file_config_telegram_bot" | awk -F'=' '{print $2}'); then
+            if [[ -n "$CONFIG_TELEGRAMBOT_BOT_TOKEN" ]]; then
+                az_log b "Telegram bot token extracted successfully."
+                if CONFIG_TELEGRAM_BOT_LIMIT_PERMISSION=$(grep -i LIMIT_PERMISSION "$file_config_telegram_bot" | awk -F'=' '{print $2}'); then
+                    if [[ -n "$CONFIG_TELEGRAM_BOT_LIMIT_PERMISSION" ]]; then
+                        az_log b "Telegram bot limit permission extracted successfully."
+                        return 0
+                    else
+                        az_log br "Error: Unable to retrieve the telegram bot limit permission."
+                        return 1
+                    fi
+                else
+                    az_log br "Error: Unable to retrieve the telegram bot limit permission."
+                    return 1
+                fi
             else
-                az_log br "Error: Unable to retrieve the telegram bot limit permission."
+                az_log br "Error: Unable to retrieve the telegram bot token."
                 return 1
             fi
         else
@@ -357,9 +379,9 @@ config_detector_telegrambot(){
 config_detector_filebrowser(){
     az_log b "Detecting filebrowser config..."
     if [ -f "$file_config_filebrowser_json" ]; then
-        if SECRET_FILEBROWSER_PASSWORD_HASH=$(grep -i password "$file_config_filebrowser_json" |  awk -F'"' '{print $4}'); then
+        if CONFIG_FILEBROWSER_PASSWORD_HASH=$(grep -i password "$file_config_filebrowser_json" |  awk -F'"' '{print $4}'); then
             az_log b "Filebrowser password extracted successfully."
-            if USERNAME_FILEBROWSER=$(grep -i username "$file_config_filebrowser_json" | awk -F'"' '{print $4}'); then
+            if CONFIG_FILEBROWSER_USERNAME=$(grep -i username "$file_config_filebrowser_json" | awk -F'"' '{print $4}'); then
                 az_log b "Filebrowser username extracted successfully."
             else
                 az_log br "Error: Unable to retrieve the filebrowser username."
@@ -377,7 +399,7 @@ config_detector_filebrowser(){
 config_detector_webserver(){
     az_log b "Detecting webserver config..."
     if [ -f "$file_config_webserver" ]; then
-        if PORT_WEBSERVER=$(grep -i server.port "$file_config_webserver" | awk -F'=' '{print substr($2, 2)}'); then
+        if CONFIG_WEBSERVER_PORT=$(grep -i server.port "$file_config_webserver" | awk -F'=' '{print substr($2, 2)}'); then
             az_log b "Webserver port extracted successfully."
         else
             az_log br "Error: Unable to retrieve the webserver port."
@@ -491,9 +513,10 @@ main() {
     init_variables
     setup_static_header
     check_hierarchy
+    config_detector_info
     sleep 2
-    if $CHECK_HIERARCHY_ISOK; then
-        main_menu
-    fi
+    #if $CHECK_HIERARCHY_ISOK; then
+    #    main_menu
+    #fi
 }
 main

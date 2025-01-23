@@ -4,7 +4,7 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 
 # Version info
-VERSION_DLOADBOX="alpha-2.1.0"
+VERSION_DLOADBOX="alpha-2.1.1"
 VERSION_DLOADBOX_CREATE="2024-12-01"
 VERSION_DLOADBOX_UPDATE="2025-01-23"
 VERSION_FILEBROWSER="2.31.2"
@@ -131,15 +131,15 @@ init_bsics(){
     URL_FILEBROWSER="https://github.com/filebrowser/filebrowser/releases/download/v$VERSION_FILEBROWSER/linux-amd64-filebrowser.tar.gz"
     URL_ARIANG="https://github.com/mayswind/AriaNg/releases/download/$VERSION_ARIANG/AriaNg-$VERSION_ARIANG.zip"
     DIR_INSTALL_SOURCE=$(dirname "$(realpath "$0")")/
-    DIR_INSTALL_DEST="/opt/dloadbox/"
+    dir_dloadbox="/opt/dloadbox/"
     FILE_INSTALL_SCRIPT=$(basename "$0")
-    PORT_FILEBROWSER="6803"
-    PORT_RPC="6802"
-    PORT_WEBSERVER="6801"
-    if INTERFACE_MAIN=$(ip route | awk '/default/ {print $5}' | head -n 1); then
-        az_log l "Main interface is: $INTERFACE_MAIN"
-        if IP_MAIN=$(ip addr show "$INTERFACE_MAIN" | awk '/inet / {print $2}' | cut -d/ -f1 | head -n 1); then
-            az_log l " IP is: $IP_MAIN"
+    CONFIG_FILEBROWSER_PORT="6803"
+    CONFIG_ARIA2_RPC_LISTEN_PORT="6802"
+    CONFIG_WEBSERVER_PORT="6801"
+    if CONFIG_INTERFACE_MAIN=$(ip route | awk '/default/ {print $5}' | head -n 1); then
+        az_log l "Main interface is: $CONFIG_INTERFACE_MAIN"
+        if CONFIG_IP_MAIN=$(ip addr show "$CONFIG_INTERFACE_MAIN" | awk '/inet / {print $2}' | cut -d/ -f1 | head -n 1); then
+            az_log l " IP is: $CONFIG_IP_MAIN"
 
         else
             az_log br "Error: Unable to retrieve the main IP."
@@ -399,8 +399,8 @@ install_webserver() {
     az_log b "Setting files permission..."
     sleep 1
     if chown -R www-data:www-data /opt/dloadbox/www &>/dev/null; then
-        if chown www-data:adm "$DIR_INSTALL_DEST"/log/dloadbox-lighttpd-error.log &>/dev/null; then
-            if chown www-data:adm "$DIR_INSTALL_DEST"/config/dloadbox-lighttpd.conf &>/dev/null; then
+        if chown www-data:adm "$dir_dloadbox"/log/dloadbox-lighttpd-error.log &>/dev/null; then
+            if chown www-data:adm "$dir_dloadbox"/config/dloadbox-lighttpd.conf &>/dev/null; then
                 az_log bg "Permission have been successfully chenged"
             else
                 az_log br "There was an error in Setting permissions for lighttpd.conf"
@@ -426,7 +426,7 @@ install_webserver() {
     az_log b "---------------------------------"
     az_log b "Creting wbserver config..."
     sleep 1
-    if ln -s "$DIR_INSTALL_DEST"config/dloadbox-lighttpd.conf  /etc/lighttpd/conf-enabled/dloadbox-lighttpd.conf &>/dev/null; then
+    if ln -s "$dir_dloadbox"config/dloadbox-lighttpd.conf  /etc/lighttpd/conf-enabled/dloadbox-lighttpd.conf &>/dev/null; then
         if sed -i '/server.document-root/s/^/#/' /etc/lighttpd/lighttpd.conf &>/dev/null; then
             if sed -i '/server.errorlog/s/^/#/' /etc/lighttpd/lighttpd.conf &>/dev/null; then
                 if sed -i '/server.port/s/^/#/' /etc/lighttpd/lighttpd.conf &>/dev/null; then
@@ -492,7 +492,7 @@ install_webserver() {
     az_log b "---------------------------------"
     az_log b "Checking webserver port"
     sleep 5
-    if check_port "$PORT_WEBSERVER"; then
+    if check_port "$CONFIG_WEBSERVER_PORT"; then
         az_log bg "Webserver port is open"
     else
         az_log br "Webserver port is not open"
@@ -516,7 +516,7 @@ install_aria2() {
     az_log b "---------------------------------"
     az_log b "Setting up aria2 config"
     sleep 1
-    if [[ -f "$DIR_INSTALL_DEST"config/dloadbox-aria2.conf ]]; then
+    if [[ -f "$dir_dloadbox"config/dloadbox-aria2.conf ]]; then
         az_log bg "Aria2 config found"
     else
         az_log br "There was an error in finding up aria2 config"
@@ -527,11 +527,11 @@ install_aria2() {
     fi
     az_log b "Generating random rpc-secret"
     sleep 1
-    if SECRET_RPC=$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 25); then
+    if CONFIG_ARIA2_RPC_SECRET=$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 25); then
         az_log bg "rpc-secret have been successfully generated"
         az_log b "Configuring rpc-secret"
         sleep 1
-        if sed -i "/rpc-secret=/c\rpc-secret=$SECRET_RPC" "$DIR_INSTALL_DEST"config/dloadbox-aria2.conf &>/dev/null; then
+        if sed -i "/rpc-secret=/c\rpc-secret=$CONFIG_ARIA2_RPC_SECRET" "$dir_dloadbox"config/dloadbox-aria2.conf &>/dev/null; then
             az_log bg "rpc-secret have been successfully configured"
         else
             az_log br "There was an error in configuring rpc-secret"
@@ -550,10 +550,10 @@ install_aria2() {
     az_log b "---------------------------------"
     az_log b "Setting up aria2 service"
     sleep 1
-    if [[ -f "$DIR_INSTALL_DEST"/services/dloadbox-ariarpc.service ]]; then
+    if [[ -f "$dir_dloadbox"/services/dloadbox-ariarpc.service ]]; then
         az_log bg "Aria2 service file found"
         az_log b "Creating service"
-        if ln -s "$DIR_INSTALL_DEST"services/dloadbox-ariarpc.service /etc/systemd/system/dloadbox-ariarpc.service &>/dev/null; then
+        if ln -s "$dir_dloadbox"services/dloadbox-ariarpc.service /etc/systemd/system/dloadbox-ariarpc.service &>/dev/null; then
             az_log bg "Service have been successfully created"
             systemctl daemon-reload &>/dev/null
             az_log b "Starting dloadbox-ariarpc service"
@@ -603,7 +603,7 @@ install_aria2() {
     az_log b "---------------------------------"
     az_log b "Checking aria2 rpc port"
     sleep 1
-    if check_port "$PORT_RPC"; then
+    if check_port "$CONFIG_ARIA2_RPC_LISTEN_PORT"; then
         az_log bg "Aria2 rpc port is open"
     else
         az_log br "Aria2 rpc port is not open"
@@ -748,15 +748,15 @@ install_filebrowser() {
     az_log b "---------------------------------"
     az_log b "Generating randop password for filebrowser"
     sleep 1
-    if PASSWORD_FILEBROWSER=$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 25); then
+    if CONFIG_FILEBROWSER_PASSWORD=$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 25); then
         az_log bg "Password have been successfully generated"
         az_log b "making password hash"
         sleep 1
-        if PASSWORD_FILEBROWSER_HASH=$(dloadbox-filebrowser hash "$PASSWORD_FILEBROWSER") &>/dev/null; then
+        if CONFIG_FILEBROWSER_PASSWORD_HASH=$(dloadbox-filebrowser hash "$CONFIG_FILEBROWSER_PASSWORD") &>/dev/null; then
             az_log bg "Password hash have been successfully created"
             az_log b "Configuring filebrowser"
             sleep 1
-            if sed -i "/\"password\"/c\    \"password\": \"$PASSWORD_FILEBROWSER_HASH\"" /opt/dloadbox/config/dloadbox-filebrowser.json &>/dev/null; then
+            if sed -i "/\"password\"/c\    \"password\": \"$CONFIG_FILEBROWSER_PASSWORD_HASH\"" /opt/dloadbox/config/dloadbox-filebrowser.json &>/dev/null; then
                 az_log bg "filebrowser  have been successfully configured"
             else
                 az_log br "There was an error in configuring filebrowser "
@@ -782,10 +782,10 @@ install_filebrowser() {
     az_log b "---------------------------------"
     az_log b "Setting up filebrowser service"
     sleep 1
-    if [[ -f "$DIR_INSTALL_DEST"services/dloadbox-filebrowser.service ]]; then
+    if [[ -f "$dir_dloadbox"services/dloadbox-filebrowser.service ]]; then
         az_log bg "Filebrowser service file found"
         az_log b "Creating service"
-        if ln -s "$DIR_INSTALL_DEST"services/dloadbox-filebrowser.service /etc/systemd/system/dloadbox-filebrowser.service &>/dev/null; then
+        if ln -s "$dir_dloadbox"services/dloadbox-filebrowser.service /etc/systemd/system/dloadbox-filebrowser.service &>/dev/null; then
             az_log bg "Service have been successfully created"
             systemctl daemon-reload &>/dev/null
             az_log b "Starting dloadbox-filebrowser service"
@@ -829,7 +829,7 @@ install_filebrowser() {
     az_log b "---------------------------------"
     az_log b "Checking filebrowser port"
     sleep 1
-    if check_port "$PORT_FILEBROWSER"; then
+    if check_port "$CONFIG_FILEBROWSER_PORT"; then
         az_log bg "Filebrowser port is open"
     else
         az_log br "Filebrowser port is not open"
@@ -935,10 +935,10 @@ install_telegrambot() {
     echo
 
     while true; do
-        read -r -p "Please enter your Telegram bot token: " BOT_TOKEN
+        read -r -p "Please enter your Telegram bot token: " CONFIG_TELEGRAMBOT_BOT_TOKEN
 
         # Validate token format using regex
-        if [[ $BOT_TOKEN =~ ^[0-9]+:[-_a-zA-Z0-9]+$ ]]; then
+        if [[ $CONFIG_TELEGRAMBOT_BOT_TOKEN =~ ^[0-9]+:[-_a-zA-Z0-9]+$ ]]; then
             az_log bg "✅ Valid token format"
             break
         else
@@ -947,7 +947,7 @@ install_telegrambot() {
     done
 
     # Save token to config file
-    if sed -i "s|^BOT_TOKEN=.*|BOT_TOKEN=${BOT_TOKEN}|" /opt/dloadbox/config/dloadbox-telegrambot.conf &>/dev/null; then
+    if sed -i "s|^BOT_TOKEN=.*|BOT_TOKEN=${CONFIG_TELEGRAMBOT_BOT_TOKEN}|" /opt/dloadbox/config/dloadbox-telegrambot.conf &>/dev/null; then
         az_log bg "Bot token successfully saved"
     else
         az_log br "Error saving bot token"
@@ -966,13 +966,13 @@ install_telegrambot() {
 
         case $choice in
             1)
-                LIMIT_PERMISSION=false
-                ALLOWED_USERNAMES="ALL"
+                CONFIG_TELEGRAMBOT_LIMIT_PERMISSION=false
+                CONFIG_TELEGRAMBOT_ALLOWED_USERNAMES="ALL"
                 az_log b "You chose: Anyone can use the bot"
                 break
                 ;;
             2)
-                LIMIT_PERMISSION=true
+                CONFIG_TELEGRAMBOT_LIMIT_PERMISSION=true
                 az_log b "You chose: Only specific users can use the bot"
                 break
                 ;;
@@ -981,17 +981,17 @@ install_telegrambot() {
                 ;;
         esac
     done
-    if [[ "$LIMIT_PERMISSION" == "true" ]]; then
+    if [[ "$CONFIG_TELEGRAMBOT_LIMIT_PERMISSION" == "true" ]]; then
         sed -i '/LIMIT_PERMISSION/c\LIMIT_PERMISSION=true' /opt/dloadbox/config/dloadbox-telegrambot.conf &>/dev/null
         if grep -q "LIMIT_PERMISSION=true" /opt/dloadbox/config/dloadbox-telegrambot.conf; then
             az_log b "LIMIT_PERMISSION is set to true"
             az_log b "Enter the usernames of the users who can use the bot, separated by commas (without @) and case sensitive"
             az_log b "Example: username1,username2,username3"
             read -r -p "Enter the usernames: " ALLOWED_USERNAMES
-            az_log b "Allowed usernames: $ALLOWED_USERNAMES"
-            sed -i "s|^ALLOWED_USERNAMES=.*|ALLOWED_USERNAMES=${ALLOWED_USERNAMES}|" /opt/dloadbox/config/dloadbox-telegrambot.conf &>/dev/null
-            if grep -q "$ALLOWED_USERNAMES" /opt/dloadbox/config/dloadbox-telegrambot.conf; then
-                az_log bg "ALLOWED_USERNAMES is set to $ALLOWED_USERNAMES"
+            az_log b "Allowed usernames: $CONFIG_TELEGRAMBOT_ALLOWED_USERNAMES"
+            sed -i "s|^ALLOWED_USERNAMES=.*|ALLOWED_USERNAMES=${CONFIG_TELEGRAMBOT_ALLOWED_USERNAMES}|" /opt/dloadbox/config/dloadbox-telegrambot.conf &>/dev/null
+            if grep -q "$CONFIG_TELEGRAMBOT_ALLOWED_USERNAMES" /opt/dloadbox/config/dloadbox-telegrambot.conf; then
+                az_log bg "ALLOWED_USERNAMES is set to $CONFIG_TELEGRAMBOT_ALLOWED_USERNAMES"
             else
                 az_log br "There was an error in setting ALLOWED_USERNAMES"
                 az_log br "Please open an issue in github"
@@ -1007,9 +1007,9 @@ install_telegrambot() {
     fi
     az_log b "---------------------------------"
     az_log b "Setting up Aria RPC related bot configuration"
-    if sed -i "s|^ARIA2_RPC_SECRET=.*|ARIA2_RPC_SECRET=token:${SECRET_RPC}|" /opt/dloadbox/config/dloadbox-telegrambot.conf &>/dev/null; then
+    if sed -i "s|^ARIA2_RPC_SECRET=.*|ARIA2_RPC_SECRET=token:${CONFIG_ARIA2_RPC_SECRET}|" /opt/dloadbox/config/dloadbox-telegrambot.conf &>/dev/null; then
         az_log bg "ARIA2_RPC_SECRET have been successfully set in bot config"
-        if sed -i "s|^ARIA2_RPC_URL=.*|ARIA2_RPC_URL=http://${IP_MAIN}:${PORT_RPC}/jsonrpc|" /opt/dloadbox/config/dloadbox-telegrambot.conf &>/dev/null; then
+        if sed -i "s|^ARIA2_RPC_URL=.*|ARIA2_RPC_URL=http://${CONFIG_IP_MAIN}:${CONFIG_ARIA2_RPC_LISTEN_PORT}/jsonrpc|" /opt/dloadbox/config/dloadbox-telegrambot.conf &>/dev/null; then
             az_log bg "ARIA2_RPC_URL have been successfully set in bot config"
         else
             az_log br "There was an error in setting ARIA2_RPC_URL"
@@ -1025,10 +1025,10 @@ install_telegrambot() {
     az_log b "---------------------------------"
     az_log b "Setting up telegram bot service"
     sleep 1
-    if [[ -f "$DIR_INSTALL_DEST"services/dloadbox-telegram.service ]]; then
+    if [[ -f "$dir_dloadbox"services/dloadbox-telegram.service ]]; then
         az_log bg "Telegram bot service file found"
         az_log b "Creating service"
-        if ln -s "$DIR_INSTALL_DEST"services/dloadbox-telegram.service /etc/systemd/system/dloadbox-telegram.service &>/dev/null; then
+        if ln -s "$dir_dloadbox"services/dloadbox-telegram.service /etc/systemd/system/dloadbox-telegram.service &>/dev/null; then
             az_log bg "Service have been successfully created"
             systemctl daemon-reload &>/dev/null
             az_log b "Starting dloadbox-telegram service"
@@ -1071,9 +1071,9 @@ install_telegrambot() {
     fi
 }
 show_dloadbox_info() {
-    ENCODED_SECRET=$(echo -n "$SECRET_RPC" | base64 | tr '+/' '-_' | sed 's/=//g')
-    USERNAME_BOT=$(curl -s "https://api.telegram.org/bot$BOT_TOKEN/getMe" | grep -o '"username":"[^"]*"' | sed -E 's/"username":"(.*)"/\1/')
-    URL_ARIANG="http://${IP_MAIN}:${PORT_WEBSERVER}/#!/settings/rpc/set/http/${IP_MAIN}/${PORT_RPC}/jsonrpc/${ENCODED_SECRET}"
+    CONFIG_ARIANG_RPC_SECRET_HASH=$(echo -n "$CONFIG_ARIA2_RPC_SECRET" | base64 | tr '+/' '-_' | sed 's/=//g')
+    CONFIG_TELEGRAMBOT_BOT_USERNAME=$(curl -s "https://api.telegram.org/bot$CONFIG_TELEGRAMBOT_BOT_TOKEN/getMe" | grep -o '"username":"[^"]*"' | sed -E 's/"username":"(.*)"/\1/')
+    CONFIG_ARIANG_URL="http://${CONFIG_IP_MAIN}:${CONFIG_WEBSERVER_PORT}/#!/settings/rpc/set/http/${CONFIG_IP_MAIN}/${CONFIG_ARIA2_RPC_LISTEN_PORT}/jsonrpc/${CONFIG_ARIANG_RPC_SECRET_HASH}"
 
     # Display in terminal
     echo
@@ -1084,21 +1084,21 @@ show_dloadbox_info() {
 
     # Download Manager Section
     echo -e "${GREEN}▸ 📥 Download Manager${NC}"
-    echo -e "  ${BLUE}•${NC} Web Interface: ${CYAN}$URL_ARIANG${NC}"
+    echo -e "  ${BLUE}•${NC} Web Interface: ${CYAN}$CONFIG_ARIANG_URL${NC}"
     echo -e "  ${BLUE}•${NC} Features: Create and manage downloads via browser"
     echo
 
     # File Browser Section
     echo -e "${GREEN}▸ 📂 File Browser${NC}"
-    echo -e "  ${BLUE}•${NC} URL: ${CYAN}http://${IP_MAIN}:${PORT_FILEBROWSER}${NC}"
+    echo -e "  ${BLUE}•${NC} URL: ${CYAN}http://${CONFIG_IP_MAIN}:${CONFIG_FILEBROWSER_PORT}${NC}"
     echo -e "  ${BLUE}•${NC} Username: ${CYAN}dloadboxadmin${NC}"
-    echo -e "  ${BLUE}•${NC} Password: ${CYAN}$PASSWORD_FILEBROWSER${NC}"
+    echo -e "  ${BLUE}•${NC} Password: ${CYAN}$CONFIG_FILEBROWSER_PASSWORD${NC}"
     echo -e "  ${BLUE}•${NC} Features: Browse and manage downloaded files"
     echo
 
     # Telegram Bot Section
     echo -e "${GREEN}▸ 🤖 Telegram Bot${NC}"
-    echo -e "  ${BLUE}•${NC} Bot: ${CYAN}@${USERNAME_BOT}${NC}"
+    echo -e "  ${BLUE}•${NC} Bot: ${CYAN}@${CONFIG_TELEGRAMBOT_BOT_USERNAME}${NC}"
     echo -e "  ${BLUE}•${NC} Features: Send links directly to bot for downloading"
     echo
 
@@ -1111,21 +1111,21 @@ show_dloadbox_info() {
         echo
         echo "Download Manager"
         echo "----------------------------------------"
-        echo "WEB_GUI_URL=$URL_ARIANG"
-        echo "WEB_GUI_PORT=$PORT_WEBSERVER"
+        echo "WEB_GUI_URL=$CONFIG_ARIANG_URL"
+        echo "WEB_GUI_PORT=$CONFIG_WEBSERVER_PORT"
         echo
         echo "File Browser"
         echo "----------------------------------------"
-        echo "FILE_BROWSER_URL=http://${IP_MAIN}:${PORT_FILEBROWSER}"
+        echo "FILE_BROWSER_URL=http://${CONFIG_IP_MAIN}:${CONFIG_FILEBROWSER_PORT}"
         echo "FILE_BROWSER_USERNAME=dloadboxadmin"
-        echo "FILE_BROWSER_PASSWORD=$PASSWORD_FILEBROWSER"
+        echo "FILE_BROWSER_PASSWORD=$CONFIG_FILEBROWSER_PASSWORD"
         echo
         echo "Telegram Bot"
         echo "----------------------------------------"
-        echo "TELEGRAM_BOT_USERNAME=@${USERNAME_BOT}"
-        echo "TELEGRAM_BOT_TOKEN=$BOT_TOKEN"
-        echo "TELEGRAM_BOT_LIMIT_PERMISSION=$LIMIT_PERMISSION"
-        echo "TELEGRAM_BOT_ALLOWED_USERNAMES=$ALLOWED_USERNAMES"
+        echo "TELEGRAM_BOT_USERNAME=@${CONFIG_TELEGRAMBOT_BOT_USERNAME}"
+        echo "TELEGRAM_BOT_TOKEN=$CONFIG_TELEGRAMBOT_BOT_TOKEN"
+        echo "TELEGRAM_BOT_LIMIT_PERMISSION=$CONFIG_TELEGRAMBOT_LIMIT_PERMISSION"
+        echo "TELEGRAM_BOT_ALLOWED_USERNAMES=$CONFIG_TELEGRAMBOT_ALLOWED_USERNAMES"
         echo
         echo "############################################################"
         echo "##             DloadBox Internal Variables                ##"
@@ -1137,25 +1137,26 @@ show_dloadbox_info() {
         echo "VERSION_FILEBROWSER=$VERSION_FILEBROWSER"
         echo "VERSION_ARIANG=$VERSION_ARIANG"
         echo "# Network"
-        echo "INTERNALCONFIG_IP_MAIN=$IP_MAIN"
+        echo "INTERNALCONFIG_IP_MAIN=$CONFIG_IP_MAIN"
+        echo "INTERNALCONFIG_INTERFACE_MAIN=$CONFIG_INTERFACE_MAIN"
         echo "# Aria2 config"
-        echo "INTERNALCONFIG_ARIA2_RPC_SECRET=$SECRET_RPC"
-        echo "INTERNALCONFIG_ARIA2_RPC_LISTEN_PORT=$PORT_RPC"
+        echo "INTERNALCONFIG_ARIA2_RPC_SECRET=$CONFIG_ARIA2_RPC_SECRET"
+        echo "INTERNALCONFIG_ARIA2_RPC_LISTEN_PORT=$CONFIG_ARIA2_RPC_LISTEN_PORT"
         echo "# Telegram Bot Config"
-        echo "INTERNALCONFIG_TELEGRAMBOT_LIMIT_PERMISSION=$LIMIT_PERMISSION"
-        echo "INTERNALCONFIG_TELEGRAMBOT_ALLOWED_USERNAMES=$ALLOWED_USERNAMES"
-        echo "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_SECRET=token:$SECRET_RPC"
-        echo "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_URL=http://${IP_MAIN}:${PORT_RPC}/jsonrpc"
-        echo "INTERNALCONFIG_TELEGRAMBOT_BOT_TOKEN=$BOT_TOKEN"
+        echo "INTERNALCONFIG_TELEGRAMBOT_LIMIT_PERMISSION=$CONFIG_TELEGRAMBOT_LIMIT_PERMISSION"
+        echo "INTERNALCONFIG_TELEGRAMBOT_ALLOWED_USERNAMES=$CONFIG_TELEGRAMBOT_ALLOWED_USERNAMES"
+        echo "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_SECRET=token:$CONFIG_ARIA2_RPC_SECRET"
+        echo "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_URL=http://${CONFIG_IP_MAIN}:${CONFIG_ARIA2_RPC_LISTEN_PORT}/jsonrpc"
+        echo "INTERNALCONFIG_TELEGRAMBOT_BOT_TOKEN=$CONFIG_TELEGRAMBOT_BOT_TOKEN"
         echo "# Webserver config"
-        echo "INTERNALCONFIG_WEBSERVER_PORT=$PORT_WEBSERVER"
+        echo "INTERNALCONFIG_WEBSERVER_PORT=$CONFIG_WEBSERVER_PORT"
         echo "# Filebrowser config"
-        echo "INTERNALCONFIG_FILEBROWSER_PASSWORD=$PASSWORD_FILEBROWSER"
-        echo "INTERNALCONFIG_FILEBROWSER_PASSWORD_HASH=$PASSWORD_FILEBROWSER_HASH"
+        echo "INTERNALCONFIG_FILEBROWSER_PASSWORD=$CONFIG_FILEBROWSER_PASSWORD"
+        echo "INTERNALCONFIG_FILEBROWSER_PASSWORD_HASH=$CONFIG_FILEBROWSER_PASSWORD_HASH"
         echo "INTERNALCONFIG_FILEBROWSER_USERNAME=dloadboxadmin"
-        echo "INTERNALCONFIG_FILEBROWSER_PORT=$PORT_FILEBROWSER"
+        echo "INTERNALCONFIG_FILEBROWSER_PORT=$CONFIG_FILEBROWSER_PORT"
         echo "# AriaNG config"
-        echo "INTERNALCONFIG_ARIANG_URL=$URL_ARIANG"
+        echo "INTERNALCONFIG_ARIANG_URL=$CONFIG_ARIANG_URL"
     } >> /opt/dloadbox/dloadbox-info
 }
 firewall_config() {
@@ -1573,40 +1574,40 @@ install_dloadbox() {
     package_installer "$PKG_DEP"
     az_log b "---------------------------------"
     az_log b "Adding firewall rules..."
-    firewall_config --allow "$PORT_WEBSERVER" "$PORT_RPC" "$PORT_FILEBROWSER"
+    firewall_config --allow "$CONFIG_WEBSERVER_PORT" "$CONFIG_ARIA2_RPC_LISTEN_PORT" "$CONFIG_FILEBROWSER_PORT"
     az_log b "Done"
     az_log b "---------------------------------"
     az_log b "Checking DloadBox default ports on your system..."
     sleep 1
-    if check_port "$PORT_WEBSERVER"; then
-        az_log br "Port $PORT_WEBSERVER is used by another application"
+    if check_port "$CONFIG_WEBSERVER_PORT"; then
+        az_log br "Port $CONFIG_WEBSERVER_PORT is used by another application"
         az_log br "DloadBox need to use this port for web server"
-        az_log br "Please clear port $PORT_WEBSERVER on your system and run installer again"
+        az_log br "Please clear port $CONFIG_WEBSERVER_PORT on your system and run installer again"
         az_log br "You can open an issue in github"
         sleep 3
         exit 1
     else
-        az_log bg "Port $PORT_WEBSERVER is free"
+        az_log bg "Port $CONFIG_WEBSERVER_PORT is free"
     fi
-    if check_port "$PORT_RPC"; then
-        az_log br "Port $PORT_RPC is used by another application"
+    if check_port "$CONFIG_ARIA2_RPC_LISTEN_PORT"; then
+        az_log br "Port $CONFIG_ARIA2_RPC_LISTEN_PORT is used by another application"
         az_log br "DloadBox need to use this port for aria2 rpc"
-        az_log br "Please clear port $PORT_RPC on your system and run installer again"
+        az_log br "Please clear port $CONFIG_ARIA2_RPC_LISTEN_PORT on your system and run installer again"
         az_log br "You can open an issue in github"
         sleep 3
         exit 1
     else
-        az_log bg "Port $PORT_RPC is free"
+        az_log bg "Port $CONFIG_ARIA2_RPC_LISTEN_PORT is free"
     fi
-    if check_port "$PORT_FILEBROWSER"; then
-        az_log br "Port $PORT_FILEBROWSER is used by another application"
+    if check_port "$CONFIG_FILEBROWSER_PORT"; then
+        az_log br "Port $CONFIG_FILEBROWSER_PORT is used by another application"
         az_log br "DloadBox need to use this port for filebrowser"
-        az_log br "Please clear port $PORT_FILEBROWSER on your system and run installer again"
+        az_log br "Please clear port $CONFIG_FILEBROWSER_PORT on your system and run installer again"
         az_log br "You can open an issue in github"
         sleep 3
         exit 1
     else
-        az_log bg "Port $PORT_FILEBROWSER is free"
+        az_log bg "Port $CONFIG_FILEBROWSER_PORT is free"
     fi
     find . -name '*dloadbox*' ! -name "$FILE_INSTALL_SCRIPT" ! -name "dloadbox-install.log" -exec rm -rf {} \; 2>/dev/null
     az_log b "Downloading DloadBox repo..."
@@ -1679,11 +1680,11 @@ install_dloadbox() {
     az_log b "---------------------------------"
     az_log b "Setting permissions"
     sleep 1
-    if chmod 755 "$DIR_INSTALL_DEST" &>/dev/null; then
-        if find "$DIR_INSTALL_DEST" -type d -exec chmod 755 {} \; &>/dev/null; then
-            if find "$DIR_INSTALL_DEST" -type f -exec chmod 644 {} \; &>/dev/null; then
+    if chmod 755 "$dir_dloadbox" &>/dev/null; then
+        if find "$dir_dloadbox" -type d -exec chmod 755 {} \; &>/dev/null; then
+            if find "$dir_dloadbox" -type f -exec chmod 644 {} \; &>/dev/null; then
                 az_log bg "Permission have been successfully chenged"
-                chmod +x "$DIR_INSTALL_DEST/bin/dloadbox-manager.sh"
+                chmod +x "$dir_dloadbox/bin/dloadbox-manager.sh"
             fi
         fi
     else
@@ -1711,7 +1712,7 @@ install_dloadbox() {
     install_ariang
     az_log b "---------------------------------"
     sleep 2
-    if ln -s "$DIR_INSTALL_DEST/bin/dloadbox-manager.sh" /bin/dloadbox &>/dev/null; then
+    if ln -s "$dir_dloadbox/bin/dloadbox-manager.sh" /bin/dloadbox &>/dev/null; then
         az_log bg "DloadBox manager link created successfully"
     else
         az_log br "There was an error in creating DloadBox manager link"
@@ -1759,7 +1760,7 @@ dloadbox_uninstall() {
         az_log br "❌ Uninstallation completed with some errors"
     fi
     az_log b "Removing firewall rules..."
-    firewall_config --remove "$PORT_WEBSERVER" "$PORT_RPC" "$PORT_FILEBROWSER"
+    firewall_config --remove "$CONFIG_WEBSERVER_PORT" "$CONFIG_ARIA2_RPC_LISTEN_PORT" "$CONFIG_FILEBROWSER_PORT"
     az_log b "Done"
     az_log b "---------------------------------"
 }
