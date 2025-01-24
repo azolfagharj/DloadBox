@@ -4,7 +4,7 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 #region version
 # Version info
-VERSION_DLOADBOX="alpha-2.1.2"
+VERSION_DLOADBOX="alpha-2.1.3"
 VERSION_DLOADBOX_CREATE="2024-12-01"
 VERSION_DLOADBOX_UPDATE="2025-01-23"
 VERSION_FILEBROWSER="2.31.2"
@@ -500,7 +500,7 @@ check_hierarchy(){
     for item in "${hierarchy[@]}"; do
         ((count++))
         if [[ ! -e "$item" ]]; then
-            az_log br "Not found: $item"
+            az_log br "❌ Not found: $item"
             ((count_failed++))
         else
             az_log l "Found: $item"
@@ -508,10 +508,10 @@ check_hierarchy(){
         fi
     done
     if [[ "$count_failed" == "0" ]]; then
-        az_log bg "ALL DloadBox Files and Directories Found"
+        az_log bg "✅ ALL DloadBox Files and Directories Found"
         return 0
     else
-        az_log br "Error: $count_failed of $count DloadBox Files and Directories are missing"
+        az_log br "❌ Error: $count_failed of $count DloadBox Files and Directories are missing"
         CHECK_HIERARCHY_ISOK=false
         return 1
     fi
@@ -751,7 +751,7 @@ config_changer(){
 config_changer_info(){
     az_log b "Changing dloadbox-info file..."
     if [[ -z "$CONFIG_FILEBROWSER_PASSWORD" ]]; then
-        CONFIG_FILEBROWSER_PASSWORD="!! Unhashed Filebrowser Password Only save during installation !!"
+        CONFIG_FILEBROWSER_PASSWORD="This Password only shows after first installation"
     fi
     true > "$file_dloadbox_info"
     {
@@ -825,7 +825,7 @@ config_changer_info(){
     az_log bg "DloadBox Info file successfully changed"
     return 0
 }
-main_menu() {
+menu_main() {
     clear
     setup_static_header
     echo -e "\n  ${BOLD}${CYAN}MAIN MENU${NC}"
@@ -839,7 +839,7 @@ main_menu() {
     read -r choice
     case $choice in
         1)
-            info_menu
+            menu_info
             ;;
         2)
             services_menu
@@ -858,10 +858,11 @@ main_menu() {
         *)
             echo "Invalid choice, try again."
             sleep 1
-            main_menu
+            menu_main
             ;;
     esac
 }
+menu_info
 services_menu() {
     clear
     setup_static_header
@@ -905,19 +906,19 @@ services_menu() {
 }
 main() {
     init_variables
-    #setup_static_header
-    #check_hierarchy
+    setup_static_header
+    az_log b "First Let's check if DloadBox Files and Directories are OK"
+    sleep 2
+    check_hierarchy
+    if [[ "$CHECK_HIERARCHY_ISOK" == "false" ]]; then
+        az_log br "Error: Some DloadBox Files and Directories are missing, can't Continue"
+        exit 1
+    fi
     az_log b "----------------------------------------"
-    config_detector
-    az_log b "----------------------------------------"
-    config_changer
-    az_log b "----------------------------------------"
-    config_changer_info
-    az_log b "----------------------------------------"
-    config_detector_info
-    az_log b "----------------------------------------"
-    #if $CHECK_HIERARCHY_ISOK; then
-    #    main_menu
-    #fi
+    az_log b "✨ System is ready to go..."
+    sleep 1
+    az_log b "🚀 Launching main menu..."
+    sleep 3
+    menu_main
 }
 main
