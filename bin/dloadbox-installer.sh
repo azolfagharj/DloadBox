@@ -4,7 +4,7 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 
 # Version info
-VERSION_DLOADBOX="alpha-2.1.1"
+VERSION_DLOADBOX="alpha-2.1.2"
 VERSION_DLOADBOX_CREATE="2024-12-01"
 VERSION_DLOADBOX_UPDATE="2025-01-23"
 VERSION_FILEBROWSER="2.31.2"
@@ -1148,6 +1148,7 @@ show_dloadbox_info() {
         echo "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_SECRET=token:$CONFIG_ARIA2_RPC_SECRET"
         echo "INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_URL=http://${CONFIG_IP_MAIN}:${CONFIG_ARIA2_RPC_LISTEN_PORT}/jsonrpc"
         echo "INTERNALCONFIG_TELEGRAMBOT_BOT_TOKEN=$CONFIG_TELEGRAMBOT_BOT_TOKEN"
+        echo "INTERNALCONFIG_TELEGRAMBOT_BOT_USERNAME=$CONFIG_TELEGRAMBOT_BOT_USERNAME"
         echo "# Webserver config"
         echo "INTERNALCONFIG_WEBSERVER_PORT=$CONFIG_WEBSERVER_PORT"
         echo "# Filebrowser config"
@@ -1157,6 +1158,7 @@ show_dloadbox_info() {
         echo "INTERNALCONFIG_FILEBROWSER_PORT=$CONFIG_FILEBROWSER_PORT"
         echo "# AriaNG config"
         echo "INTERNALCONFIG_ARIANG_URL=$CONFIG_ARIANG_URL"
+        echo "INTERNALCONFIG_ARIANG_RPC_SECRET_HASH=$CONFIG_ARIANG_RPC_SECRET_HASH"
     } >> /opt/dloadbox/dloadbox-info
 }
 firewall_config() {
