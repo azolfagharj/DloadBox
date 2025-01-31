@@ -4,9 +4,9 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 #region version
 # Version info
-VERSION_DLOADBOX="alpha-2.1.3"
+VERSION_DLOADBOX="alpha-2.1.4"
 VERSION_DLOADBOX_CREATE="2024-12-01"
-VERSION_DLOADBOX_UPDATE="2025-01-23"
+VERSION_DLOADBOX_UPDATE="2025-01-31"
 VERSION_FILEBROWSER="2.31.2"
 VERSION_ARIANG="1.3.8"
 #endregion
