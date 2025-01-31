@@ -4,11 +4,12 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 
 # Version info
-VERSION_DLOADBOX="alpha-2.1.4"
+VERSION_DLOADBOX="alpha-2.1.5"
 VERSION_DLOADBOX_CREATE="2024-12-01"
 VERSION_DLOADBOX_UPDATE="2025-01-31"
 VERSION_FILEBROWSER="2.31.2"
 VERSION_ARIANG="1.3.8"
+VERSION_CADDY="2.9.1"
 # Log file
 LOG_FILE="./dloadbox-install.log"
 # Define colors
@@ -130,6 +131,7 @@ init_bsics(){
     URL_DLOADBOX="https://github.com/azolfagharj/DloadBox/releases/download/$VERSION_DLOADBOX/dloadbox.zip"
     URL_FILEBROWSER="https://github.com/filebrowser/filebrowser/releases/download/v$VERSION_FILEBROWSER/linux-amd64-filebrowser.tar.gz"
     URL_ARIANG="https://github.com/mayswind/AriaNg/releases/download/$VERSION_ARIANG/AriaNg-$VERSION_ARIANG.zip"
+    URL_CADDY="https://github.com/caddyserver/caddy/releases/download/v$VERSION_CADDY/caddy_${VERSION_CADDY}_linux_amd64.tar.gz"
     DIR_INSTALL_SOURCE=$(dirname "$(realpath "$0")")/
     dir_dloadbox="/opt/dloadbox/"
     FILE_INSTALL_SCRIPT=$(basename "$0")

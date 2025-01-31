@@ -4,11 +4,12 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 #region version
 # Version info
-VERSION_DLOADBOX="alpha-2.1.4"
+VERSION_DLOADBOX="alpha-2.1.5"
 VERSION_DLOADBOX_CREATE="2024-12-01"
 VERSION_DLOADBOX_UPDATE="2025-01-31"
 VERSION_FILEBROWSER="2.31.2"
 VERSION_ARIANG="1.3.8"
+VERSION_CADDY="2.9.1"
 #endregion
 init_variables(){
     #region URL
@@ -21,6 +22,7 @@ init_variables(){
     URL_DLOADBOX_LATEST_ZIP="https://github.com/azolfagharj/DloadBox/releases/download/$VERSION_DLOADBOX/dloadbox.zip"
     URL_FILEBROWSER_TARGZ="https://github.com/filebrowser/filebrowser/releases/download/v$VERSION_FILEBROWSER/linux-amd64-filebrowser.tar.gz"
     URL_ARIANG_ZIP="https://github.com/mayswind/AriaNg/releases/download/$VERSION_ARIANG/AriaNg-$VERSION_ARIANG.zip"
+    URL_CADDY_TARGZ="https://github.com/caddyserver/caddy/releases/download/v$VERSION_CADDY/caddy_${VERSION_CADDY}_linux_amd64.tar.gz"
     #endregion
     #region hierarchy
     # ################################################################################## #
