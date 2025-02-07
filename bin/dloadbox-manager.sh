@@ -4,9 +4,9 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 #region version
 # Version info
-VERSION_DLOADBOX="alpha-2.1.5"
+VERSION_DLOADBOX="alpha-2.1.6"
 VERSION_DLOADBOX_CREATE="2024-12-01"
-VERSION_DLOADBOX_UPDATE="2025-01-31"
+VERSION_DLOADBOX_UPDATE="2025-02-07"
 VERSION_FILEBROWSER="2.31.2"
 VERSION_ARIANG="1.3.8"
 VERSION_CADDY="2.9.1"
@@ -127,6 +127,10 @@ init_variables(){
     # AriaNG config
     CONFIG_ARIANG_URL=""
     CONFIG_ARIANG_RPC_SECRET_HASH=""
+    # Caddy config
+    CONFIG_CADDY_PASSWORD=""
+    CONFIG_CADDY_PASSWORD_HASH=""
+    CONFIG_CADDY_USERNAME=""
     # Services name variables
     CONFIG_SERVICE_NAME_ARIARPC=""
     CONFIG_SERVICE_NAME_FILEBROWSER=""

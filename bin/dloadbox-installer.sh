@@ -4,11 +4,11 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 
 # Version info
-VERSION_DLOADBOX="alpha-2.1.5"
+VERSION_DLOADBOX="alpha-2.1.6"
 VERSION_DLOADBOX_CREATE="2024-12-01"
-VERSION_DLOADBOX_UPDATE="2025-01-31"
+VERSION_DLOADBOX_UPDATE="2025-02-07"
 VERSION_FILEBROWSER="2.31.2"
-VERSION_ARIANG="1.3.8"
+VERSION_ARIANG="1.3.9"
 VERSION_CADDY="2.9.1"
 # Log file
 LOG_FILE="./dloadbox-install.log"
@@ -130,7 +130,7 @@ init_bsics(){
     PKG_DEP="tar wget curl make bzip2 gzip wget unzip sudo netcat"
     URL_DLOADBOX="https://github.com/azolfagharj/DloadBox/releases/download/$VERSION_DLOADBOX/dloadbox.zip"
     URL_FILEBROWSER="https://github.com/filebrowser/filebrowser/releases/download/v$VERSION_FILEBROWSER/linux-amd64-filebrowser.tar.gz"
-    URL_ARIANG="https://github.com/mayswind/AriaNg/releases/download/$VERSION_ARIANG/AriaNg-$VERSION_ARIANG.zip"
+    URL_ARIANG="https://github.com/mayswind/AriaNg/releases/download/$VERSION_ARIANG/AriaNg-$VERSION_ARIANG-AllInOne.zip"
     URL_CADDY="https://github.com/caddyserver/caddy/releases/download/v$VERSION_CADDY/caddy_${VERSION_CADDY}_linux_amd64.tar.gz"
     DIR_INSTALL_SOURCE=$(dirname "$(realpath "$0")")/
     dir_dloadbox="/opt/dloadbox/"
@@ -138,6 +138,10 @@ init_bsics(){
     CONFIG_FILEBROWSER_PORT="6803"
     CONFIG_ARIA2_RPC_LISTEN_PORT="6802"
     CONFIG_WEBSERVER_PORT="6801"
+    # Caddy config
+    CONFIG_CADDY_PASSWORD=""
+    CONFIG_CADDY_PASSWORD_HASH=""
+    CONFIG_CADDY_USERNAME=""
     if CONFIG_INTERFACE_MAIN=$(ip route | awk '/default/ {print $5}' | head -n 1); then
         az_log l "Main interface is: $CONFIG_INTERFACE_MAIN"
         if CONFIG_IP_MAIN=$(ip addr show "$CONFIG_INTERFACE_MAIN" | awk '/inet / {print $2}' | cut -d/ -f1 | head -n 1); then
@@ -505,7 +509,145 @@ install_webserver() {
     fi
     az_log bg "The installation and configuration of the lighttpd web server was successful."
 }
-
+install_webserver2() {
+    echo
+    az_log sg "╔════════════════════════════════════════════════╗"
+    az_log sg "║    WebServer Installation and Configuration    ║"
+    az_log sg "╚════════════════════════════════════════════════╝"
+    echo
+    sleep 1
+    az_log l "Installing Caddy webserver"
+    az_log b "Downloading Caddy Webserver..."
+    wget -q --no-check-certificate -O caddy.tar.gz "$URL_CADDY" || wget  --no-check-certificate -O caddy.tar.gz "$URL_CADDY_TARGZ"
+    if [[ -f caddy.tar.gz ]]; then
+        az_log bg "Caddy have been successfully downloaded"
+    else
+        az_log br "There was an error in downloading Caddy"
+        az_log br "Exiting script in 3 second..."
+        az_log br "Please open an issue in github"
+        sleep 3
+        exit 1
+    fi
+    az_log b "Extracting Caddy Webserver..."
+    if tar xzf caddy.tar.gz  > /dev/null; then
+        az_log bg "Caddy have been successfully extracted"
+    else
+        az_log br "There was an error in extracting Caddy"
+        az_log br "Exiting script in 3 second..."
+        az_log br "Please open an issue in github"
+        sleep 3
+        exit 1
+    fi
+    if [[ -f caddy ]]; then
+        az_log b "Moving Caddy Webserver..."
+        if mv caddy /opt/dloadbox/bin/dloadbox-caddy &>/dev/null; then
+            chmod 755 /opt/dloadbox/bin/dloadbox-caddy &>/dev/null
+            mv LICENSE /opt/dloadbox/bin/LICENSE-CADDY &>/dev/null
+            az_log bg "The web server has been successfully placed"
+        else
+            az_log br "There was an error in moving Caddy"
+            az_log br "Exiting script in 3 second..."
+            az_log br "Please open an issue in github"
+            sleep 3
+            exit 1
+        fi
+    else
+        az_log br "There was an error in finding Caddy binary"
+        az_log br "Exiting script in 3 second..."
+        az_log br "Please open an issue in github"
+        sleep 3
+        exit 1
+    fi
+    rm -rf caddy.tar.gz &>/dev/null
+    rm -rf README.md &>/dev/null
+    az_log b "---------------------------------"
+    az_log b "Generating random password"
+    sleep 1
+    if CONFIG_CADDY_PASSWORD=$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 25); then
+        az_log bg "Password have been successfully generated"
+        az_log b "Generating password hash"
+        if CONFIG_CADDY_PASSWORD_HASH=$(/opt/dloadbox/bin/dloadbox-caddy hash-password --plaintext "$CONFIG_CADDY_PASSWORD"); then
+            az_log bg "Password hash have been successfully generated"
+        else
+            az_log br "There was an error in generating caddy password hash"
+            az_log br "Exiting script in 3 second..."
+            az_log br "Please open an issue in github"
+            sleep 3
+            exit 1
+        fi
+    else
+        az_log br "There was an error in generating caddy password"
+        az_log br "Exiting script in 3 second..."
+        az_log br "Please open an issue in github"
+        sleep 3
+        exit 1
+    fi
+    az_log b "Adding Password to config"
+    if sed -i "s/XXX/$CONFIG_CADDY_PASSWORD_HASH/g" "/opt/dloadbox/config/dloadbox-caddy.conf" &>/dev/null; then
+        az_log bg "Password have been successfully added to config"
+    else
+        az_log br "There was an error in adding password to config"
+        az_log br "Exiting script in 3 second..."
+        az_log br "Please open an issue in github"
+        sleep 3
+        exit 1
+    fi
+    az_log b "---------------------------------"
+    az_log b "Setting up caddy service"
+    if [[ -f "$dir_dloadbox"/services/dloadbox-caddy.service ]]; then
+        az_log bg "Caddy service file found"
+    else
+        az_log br "There was an error in finding up caddy service file"
+        az_log br "Exiting script in 3 second..."
+        az_log br "Please open an issue in github"
+        sleep 3
+        exit 1
+    fi
+    if ln -s "$dir_dloadbox"services/dloadbox-caddy.service /etc/systemd/system/dloadbox-caddy.service &>/dev/null; then
+        az_log bg "Service have been successfully created"
+        systemctl daemon-reload &>/dev/null
+    else
+        az_log br "There was an error in creating service"
+        az_log br "Exiting script in 3 second..."
+        az_log br "Please open an issue in github"
+        sleep 3
+        exit 1
+    fi
+    az_log b "Starting caddy service"
+    if systemctl start dloadbox-caddy &>/dev/null && systemctl is-active dloadbox-caddy &>/dev/null; then
+        az_log bg "Caddy service started successfully"
+    else
+        az_log br "There was an error in starting caddy service"
+        az_log br "Exiting script in 3 second..."
+        az_log br "Please open an issue in github"
+        sleep 3
+        exit 1
+    fi
+    az_log b "Enabling caddy service"
+    if systemctl enable dloadbox-caddy &>/dev/null; then
+        az_log bg "Caddy service enabled successfully"
+    else
+        az_log br "There was an error in enabling caddy service"
+        az_log br "Exiting script in 3 second..."
+        az_log br "Please open an issue in github"
+        sleep 3
+        exit 1
+    fi
+    az_log b "---------------------------------"
+    az_log b "Checking Webserver port"
+    sleep 2
+    if check_port "$CONFIG_WEBSERVER_PORT"; then
+        az_log bg "Webserver port is open"
+    else
+        az_log br "Webserver port is not open"
+        az_log br "Exiting script in 3 second..."
+        az_log br "Please open an issue in github"
+        sleep 3
+        exit 1
+    fi
+    az_log b "---------------------------------"
+    az_log bg "The installation and configuration of the Caddy web server was successful."
+}
 install_aria2() {
     echo
     az_log sg "╔═════════════════════════════════════════════════════╗"
@@ -627,7 +769,7 @@ install_ariang() {
     az_log l "Installing AriaNG GUI"
     az_log b "Downloading AriaNG GUI..."
     sleep 1
-    if wget --no-check-certificate -q -O /opt/dloadbox/www/dloadbox-ariang.zip "$URL_ARIANG" &>/dev/null; then
+    if wget --no-check-certificate -q -O /opt/dloadbox/www/dloadbox-ariang.zip "$URL_ARIANG" || wget --no-check-certificate -O /opt/dloadbox/www/dloadbox-ariang.zip "$URL_ARIANG"; then
         az_log bg "AriaNG GUI have been successfully downloaded"
     else
         az_log br "There was an error in downloading AriaNG GUI"
@@ -647,6 +789,16 @@ install_ariang() {
         sleep 3
         exit 1
     fi
+    if mv /opt/dloadbox/www/index.html /opt/dloadbox/www/dloadbox.html; then
+        az_log bg "AriaNG GUI have been successfully renamed"
+        rm -rf /opt/dloadbox/www/dloadbox-ariang.zip &>/dev/null
+    else
+        az_log br "There was an error in renaming AriaNG GUI"
+        az_log br "Exiting script in 3 second..."
+        az_log br "Please open an issue in github"
+        sleep 3
+        exit 1
+    fi
     az_log b "---------------------------------"
     sleep 1
     az_log b "Setting up AriaNG GUI Permissions"
@@ -658,6 +810,15 @@ install_ariang() {
     az_log b "---------------------------------"
     az_log b "Cleaning up..."
     sleep 1
+    if ln -s /opt/dloadbox/config/dloadbox-ariang.conf /opt/dloadbox/www/dloadbox-ariang.conf &>/dev/null; then
+        az_log bg "dloadbox-ariang.conf symlink have been successfully created in www"
+    else
+        az_log br "There was an error in creating dloadbox-ariang.conf symlink"
+        az_log br "Exiting script in 3 second..."
+        az_log br "Please open an issue in github"
+        sleep 3
+        exit 1
+    fi
     if rm -rf /opt/dloadbox/www/dloadbox-ariang.zip &>/dev/null; then
         az_log bg "Cleanup completed"
     else
@@ -843,7 +1004,6 @@ install_filebrowser() {
     az_log b "---------------------------------"
     az_log bg "The installation and configuration of the filebrowser was successful."
 }
-
 check_port() {
     local port=$1
 
@@ -1075,8 +1235,8 @@ install_telegrambot() {
 show_dloadbox_info() {
     CONFIG_ARIANG_RPC_SECRET_HASH=$(echo -n "$CONFIG_ARIA2_RPC_SECRET" | base64 | tr '+/' '-_' | sed 's/=//g')
     CONFIG_TELEGRAMBOT_BOT_USERNAME=$(curl -s "https://api.telegram.org/bot$CONFIG_TELEGRAMBOT_BOT_TOKEN/getMe" | grep -o '"username":"[^"]*"' | sed -E 's/"username":"(.*)"/\1/')
-    CONFIG_ARIANG_URL="http://${CONFIG_IP_MAIN}:${CONFIG_WEBSERVER_PORT}/#!/settings/rpc/set/http/${CONFIG_IP_MAIN}/${CONFIG_ARIA2_RPC_LISTEN_PORT}/jsonrpc/${CONFIG_ARIANG_RPC_SECRET_HASH}"
-
+    CONFIG_ARIANG_URL="http://${CONFIG_IP_MAIN}:${CONFIG_WEBSERVER_PORT}/dloadbox.html#!/settings/rpc/set/http/${CONFIG_IP_MAIN}/${CONFIG_ARIA2_RPC_LISTEN_PORT}/jsonrpc/${CONFIG_ARIANG_RPC_SECRET_HASH}"
+    echo "CONFIG_ARIANG_URL=$CONFIG_ARIANG_URL" >> /opt/dloadbox/config/dloadbox-ariang.conf
     # Display in terminal
     echo
     echo -e "${RED}╭─────────────────────╮${NC}"
@@ -1086,7 +1246,9 @@ show_dloadbox_info() {
 
     # Download Manager Section
     echo -e "${GREEN}▸ 📥 Download Manager${NC}"
-    echo -e "  ${BLUE}•${NC} Web Interface: ${CYAN}$CONFIG_ARIANG_URL${NC}"
+    echo -e "  ${BLUE}•${NC} Web Interface: ${CYAN}http://${CONFIG_IP_MAIN}:${CONFIG_WEBSERVER_PORT}${NC}"
+    echo -e "  ${BLUE}•${NC} Username: ${CYAN}dloadbox${NC}"
+    echo -e "  ${BLUE}•${NC} Password: ${CYAN}$CONFIG_CADDY_PASSWORD${NC}"
     echo -e "  ${BLUE}•${NC} Features: Create and manage downloads via browser"
     echo
 
@@ -1113,7 +1275,9 @@ show_dloadbox_info() {
         echo
         echo "Download Manager"
         echo "----------------------------------------"
-        echo "WEB_GUI_URL=$CONFIG_ARIANG_URL"
+        echo "WEB_GUI_URL=http://${CONFIG_IP_MAIN}:${CONFIG_WEBSERVER_PORT}"
+        echo "WEB_GUI_USERNAME=dloadbox"
+        echo "WEB_GUI_PASSWORD=$CONFIG_CADDY_PASSWORD"
         echo "WEB_GUI_PORT=$CONFIG_WEBSERVER_PORT"
         echo
         echo "File Browser"
@@ -1702,7 +1866,7 @@ install_dloadbox() {
     setup_user-group
     az_log b "---------------------------------"
     sleep 1
-    install_webserver
+    install_webserver2
     az_log b "---------------------------------"
     sleep 2
     install_aria2

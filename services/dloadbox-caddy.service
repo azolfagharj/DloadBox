@@ -1,0 +1,15 @@
+[Unit]
+Description=Caddy
+Documentation=https://caddyserver.com/docs/
+After=network.target network-online.target
+Requires=network-online.target
+
+[Service]
+ExecStart=/opt/dloadbox/bin/dloadbox-caddy  run --config /opt/dloadbox/config/dloadbox-caddy.conf  --adapter caddyfile
+Restart=always
+User=root
+Group=root
+LimitNOFILE=1048576
+
+[Install]
+WantedBy=multi-user.target

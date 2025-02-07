@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <script>
+        // Function to fetch the config file and extract the URL
+        fetch('dloadbox-ariang.conf')
+            .then(response => response.text())
+            .then(data => {
+                // Extract the URL from the config file content
+                var configUrl = data.split('=')[1].trim();
+
+                // Redirect immediately to the extracted URL
+                window.location.replace(configUrl);
+
+                // Update the 'click here' link with the extracted URL
+                document.getElementById("redirect-link").href = configUrl;
+            })
+            .catch(error => {
+                console.error('Error fetching the config file:', error);
+            });
+    </script>
+</head>
+<body>
+    <p>If you are not redirected, <a href="#" id="redirect-link">click here</a>.</p>
+</body>
+</html>
