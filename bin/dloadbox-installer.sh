@@ -583,7 +583,7 @@ install_webserver2() {
         exit 1
     fi
     az_log b "Adding Password to config"
-    if sed -i "s/XXX/$CONFIG_CADDY_PASSWORD_HASH/g" "/opt/dloadbox/config/dloadbox-caddy.conf" ; then
+    if sed -i "s|XXX|$CONFIG_CADDY_PASSWORD_HASH|g" "/opt/dloadbox/config/dloadbox-caddy.conf" ; then
         az_log bg "Password have been successfully added to config"
     else
         az_log br "There was an error in adding password to config"
