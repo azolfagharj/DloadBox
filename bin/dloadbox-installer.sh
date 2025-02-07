@@ -1897,7 +1897,7 @@ dloadbox_uninstall() {
     sleep 2
 
     az_log b "🔄 Removing services..."
-    service_manager --remove lighttpd dloadbox-ariarpc dloadbox-filebrowser dloadbox-telegram
+    service_manager --remove lighttpd dloadbox-ariarpc dloadbox-filebrowser dloadbox-telegram dloadbox-caddy
 
     az_log b "🗑️ Removing installed packages..."
     package_uninstaller "lighttpd aria2"
