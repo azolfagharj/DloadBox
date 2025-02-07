@@ -635,6 +635,7 @@ install_webserver2() {
     fi
     az_log b "---------------------------------"
     az_log b "Checking Webserver port"
+    nc -z -v localhost $CONFIG_WEBSERVER_PORT
     sleep 2
     if check_port "$CONFIG_WEBSERVER_PORT"; then
         az_log bg "Webserver port is open"
