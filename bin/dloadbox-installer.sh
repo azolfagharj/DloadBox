@@ -780,7 +780,7 @@ install_ariang() {
     fi
     az_log b "Extracting AriaNG GUI..."
     sleep 1
-    if unzip -q /opt/dloadbox/www/dloadbox-ariang.zip -d /opt/dloadbox/www/ &>/dev/null; then
+    if unzip -qo /opt/dloadbox/www/dloadbox-ariang.zip -d /opt/dloadbox/www/ ; then
         az_log bg "AriaNG GUI have been successfully extracted"
     else
         az_log br "There was an error in extracting AriaNG GUI"
