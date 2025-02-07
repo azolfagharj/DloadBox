@@ -790,15 +790,13 @@ install_ariang() {
         sleep 3
         exit 1
     fi
-    if mv /opt/dloadbox/www/index.html /opt/dloadbox/www/dloadbox.html; then
-        az_log bg "AriaNG GUI have been successfully renamed"
-        rm -rf /opt/dloadbox/www/dloadbox-ariang.zip &>/dev/null
+    if rm -rf /opt/dloadbox/www/dloadbox-ariang.zip  > /dev/null; then
+        az_log bg "AriaNG GUI have been successfully removed"
     else
-        az_log br "There was an error in renaming AriaNG GUI"
-        az_log br "Exiting script in 3 second..."
-        az_log br "Please open an issue in github"
+        az_log br "There was an error in removing AriaNG GUI zip file"
+        az_log br "It's not a big deal"
+        az_log br "But if you want to help us, Please open an issue in github"
         sleep 3
-        exit 1
     fi
     az_log b "---------------------------------"
     sleep 1
