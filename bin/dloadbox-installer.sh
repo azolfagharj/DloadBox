@@ -4,7 +4,7 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 
 # Version info
-VERSION_DLOADBOX="alpha-2.1.7"
+VERSION_DLOADBOX="alpha-2.1.8"
 VERSION_DLOADBOX_CREATE="2024-12-01"
 VERSION_DLOADBOX_UPDATE="2025-02-07"
 VERSION_FILEBROWSER="2.31.2"
@@ -897,9 +897,9 @@ install_filebrowser() {
     az_log b "---------------------------------"
     az_log b "Moving filebrowser LICENSE to the installation folder"
     sleep 1
-    if mv LICENSE /opt/dloadbox/bin/dloadbox-filebrowser-LICENSE &>/dev/null; then
-        chmod 755 /opt/dloadbox/bin/dloadbox-filebrowser-LICENSE &>/dev/null
-        az_log bg "LICENSE have been successfully moved to: /opt/dloadbox/bin/dloadbox-filebrowser-LICENSE"
+    if mv LICENSE /opt/dloadbox/bin/LICENSE-FILEBROWSER &>/dev/null; then
+        chmod 755 /opt/dloadbox/bin/LICENSE-FILEBROWSER &>/dev/null
+        az_log bg "LICENSE have been successfully moved to: /opt/dloadbox/bin/LICENSE-FILEBROWSER"
     else
         az_log br "There was an error in moving LICENSE"
         az_log br "Exiting script in 3 second..."
@@ -1941,7 +1941,6 @@ setup_static_header() {
     echo -e "\033[15;r"
     echo -e "\033[15;1H"
 }
-
 main() {
     setup_static_header
     display_header
