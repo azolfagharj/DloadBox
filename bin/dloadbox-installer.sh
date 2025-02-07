@@ -1235,7 +1235,7 @@ show_dloadbox_info() {
     CONFIG_ARIANG_RPC_SECRET_HASH=$(echo -n "$CONFIG_ARIA2_RPC_SECRET" | base64 | tr '+/' '-_' | sed 's/=//g')
     CONFIG_TELEGRAMBOT_BOT_USERNAME=$(curl -s "https://api.telegram.org/bot$CONFIG_TELEGRAMBOT_BOT_TOKEN/getMe" | grep -o '"username":"[^"]*"' | sed -E 's/"username":"(.*)"/\1/')
     CONFIG_ARIANG_URL="http://${CONFIG_IP_MAIN}:${CONFIG_WEBSERVER_PORT}/dloadbox.html#!/settings/rpc/set/http/${CONFIG_IP_MAIN}/${CONFIG_ARIA2_RPC_LISTEN_PORT}/jsonrpc/${CONFIG_ARIANG_RPC_SECRET_HASH}"
-    echo "CONFIG_ARIANG_URL=$CONFIG_ARIANG_URL" >> /opt/dloadbox/config/dloadbox-ariang.conf
+    echo -n "CONFIG_ARIANG_URL=$CONFIG_ARIANG_URL" >> /opt/dloadbox/config/dloadbox-ariang.conf
     # Display in terminal
     echo
     echo -e "${RED}╭─────────────────────╮${NC}"
@@ -1316,6 +1316,9 @@ show_dloadbox_info() {
         echo "INTERNALCONFIG_TELEGRAMBOT_BOT_USERNAME=$CONFIG_TELEGRAMBOT_BOT_USERNAME"
         echo "# Webserver config"
         echo "INTERNALCONFIG_WEBSERVER_PORT=$CONFIG_WEBSERVER_PORT"
+        echo "INTERNALCONFIG_WEBSERVER_USERNAME=dloadbox"
+        echo "INTERNALCONFIG_WEBSERVER_PASSWORD=$CONFIG_CADDY_PASSWORD"
+        echo "INTERNALCONFIG_WEBSERVER_PORT=$CONFIG_CADDY_PASSWORD_HASH"
         echo "# Filebrowser config"
         echo "INTERNALCONFIG_FILEBROWSER_PASSWORD=$CONFIG_FILEBROWSER_PASSWORD"
         echo "INTERNALCONFIG_FILEBROWSER_PASSWORD_HASH=$CONFIG_FILEBROWSER_PASSWORD_HASH"
