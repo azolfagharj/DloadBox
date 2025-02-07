@@ -746,7 +746,7 @@ install_aria2() {
     fi
     az_log b "---------------------------------"
     az_log b "Checking aria2 rpc port"
-    sleep 1
+    sleep 3
     if check_port "$CONFIG_ARIA2_RPC_LISTEN_PORT"; then
         az_log bg "Aria2 rpc port is open"
     else
