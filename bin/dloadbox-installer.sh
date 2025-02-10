@@ -1291,7 +1291,7 @@ install_telegrambot2() {
     az_log b "Example: 123456789:FAKE_TOKEN_DO_NOT_USE_THIS_12345678"
     echo
     if [ "$DEMO_MODE" = true ]; then
-        CONFIG_TELEGRAMBOT_BOT_TOKEN="7732807888:AAGJMI0RcKH3PzG0lq_VQl-ADAbpheD31yI"
+        CONFIG_TELEGRAMBOT_BOT_TOKEN="xxx"
     else
         while true; do
             read -r -p "Please enter your Telegram bot token: " CONFIG_TELEGRAMBOT_BOT_TOKEN
