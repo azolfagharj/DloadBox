@@ -4,7 +4,7 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 
 # Version info
-VERSION_DLOADBOX="alpha-2.2.0"
+VERSION_DLOADBOX="alpha-2.2.1"
 VERSION_DLOADBOX_CREATE="2024-12-01"
 VERSION_DLOADBOX_UPDATE="2025-02-10"
 VERSION_FILEBROWSER="2.31.2"
@@ -1417,6 +1417,7 @@ install_telegrambot2() {
     fi
 }
 show_dloadbox_info() {
+    reset && clear
     CONFIG_ARIANG_RPC_SECRET_HASH=$(echo -n "$CONFIG_ARIA2_RPC_SECRET" | base64 | tr '+/' '-_' | sed 's/=//g')
     CONFIG_TELEGRAMBOT_BOT_USERNAME=$(curl -s "https://api.telegram.org/bot$CONFIG_TELEGRAMBOT_BOT_TOKEN/getMe" | grep -o '"username":"[^"]*"' | sed -E 's/"username":"(.*)"/\1/')
     CONFIG_ARIANG_URL="http://${CONFIG_IP_MAIN}:${CONFIG_WEBSERVER_PORT}/dloadbox.html#!/settings/rpc/set/http/${CONFIG_IP_MAIN}/${CONFIG_ARIA2_RPC_LISTEN_PORT}/jsonrpc/${CONFIG_ARIANG_RPC_SECRET_HASH}"

@@ -4,7 +4,7 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 #region version
 # Version info
-VERSION_DLOADBOX="alpha-2.2.0"
+VERSION_DLOADBOX="alpha-2.2.1"
 VERSION_DLOADBOX_CREATE="2024-12-01"
 VERSION_DLOADBOX_UPDATE="2025-02-10"
 VERSION_FILEBROWSER="2.31.2"
@@ -39,21 +39,21 @@ init_variables(){
     # Services files
     file_service_ariarpc="/opt/dloadbox/services/dloadbox-ariarpc.service"
     file_service_webserver="/opt/dloadbox/services/dloadbox-caddy.service"
-    file_service_telegram_bot="/opt/dloadbox/services/dloadbox-telegram.service"
+    file_service_telegram_bot="/opt/dloadbox/services/dloadbox-telegrambot.service"
     file_service_filebrowser="/opt/dloadbox/services/dloadbox-filebrowser.service"
     # Binaries
     file_bin_aria2c="/usr/bin/aria2c"
     file_bin_caddy="/opt/dloadbox/bin/dloadbox-caddy"
-    file_bin_telegram_bot="/opt/dloadbox/bin/dloadbox-telegrambot.py"
+    file_bin_telegram_bot="/opt/dloadbox/bin/dloadbox-telegrambot"
     file_bin_filebrowser="/opt/dloadbox/bin/dloadbox-filebrowser"
     file_bin_dloadbox_manager="/opt/dloadbox/bin/dloadbox-manager.sh"
     file_bin_dloadbox_installer="/opt/dloadbox/bin/dloadbox-installer.sh"
-    file_bin_env_python3="/opt/dloadbox/venv/dloadbox-telegrambot/bin/python3"
+    #file_bin_env_python3="/opt/dloadbox/venv/dloadbox-telegrambot/bin/python3"
     # Symbolic links
     #symb_config_webserver="/etc/lighttpd/conf-enabled/dloadbox-lighttpd.conf"
     symb_service_ariarpc="/etc/systemd/system/dloadbox-ariarpc.service"
     symb_service_filebrowser="/etc/systemd/system/dloadbox-filebrowser.service"
-    symb_service_telegram_bot="/etc/systemd/system/dloadbox-telegram.service"
+    symb_service_telegram_bot="/etc/systemd/system/dloadbox-telegrambot.service"
     symb_service_webserver="/etc/systemd/system/dloadbox-caddy.service"
     symb_bin_filebrowser="/usr/bin/dloadbox-filebrowser"
     symb_bin_dloadbox="/bin/dloadbox"
@@ -64,8 +64,8 @@ init_variables(){
     dir_services="/opt/dloadbox/services"
     dir_log="/opt/dloadbox/log"
     dir_www="/opt/dloadbox/www"
-    dir_venv="/opt/dloadbox/venv"
-    dir_venv_telegrambot="/opt/dloadbox/venv/dloadbox-telegrambot/"
+    #dir_venv="/opt/dloadbox/venv"
+    #dir_venv_telegrambot="/opt/dloadbox/venv/dloadbox-telegrambot/"
     # dloadbox hierarchy array
     hierarchy=(
         "$file_dloadbox_info"
@@ -84,8 +84,8 @@ init_variables(){
         "$file_bin_filebrowser"
         "$file_bin_dloadbox_manager"
         "$file_bin_dloadbox_installer"
-        "$file_bin_env_python3"
-        "$symb_config_webserver"
+        #"$file_bin_env_python3"
+        #"$symb_config_webserver"
         "$symb_service_ariarpc"
         "$symb_service_filebrowser"
         "$symb_service_telegram_bot"
@@ -98,8 +98,8 @@ init_variables(){
         "$dir_services"
         "$dir_log"
         "$dir_www"
-        "$dir_venv"
-        "$dir_venv_telegrambot"
+        #"$dir_venv"
+        #"$dir_venv_telegrambot"
     )
     #endregion
     #region variables
