@@ -28,20 +28,24 @@ jobs:
           VERSION=$(grep VERSION_DLOADBOX bin/dloadbox-installer.sh | head -n 1 | awk -F '"' '{print $2}')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
+      - name: Find Telegram package path
+        id: find_telegram_path
+        run: |
+          TELEGRAM_PATH=$(python3 -c "import telegram; print(telegram.__path__[0])")
+          echo "TELEGRAM_PATH=$TELEGRAM_PATH" >> $GITHUB_ENV
+          echo "Found Telegram package at: $TELEGRAM_PATH"
+
       - name: Build binary with Nuitka
         run: |
           mkdir -p build_output
-          cd build_output
           nuitka --standalone --onefile \
             --include-package=requests \
             --include-package=logging \
             --include-package=os \
             --include-package=telegram \
-            --include-data-dir=/usr/local/lib/python3.10/site-packages/telegram=telegram \
-            --enable-plugin=pylint-warnings dloadbox-telegrambot.py
-          mv dloadbox-telegrambot.bin bin/dloadbox-telegrambot
-          cd ..
-          rm -rf build_output
+            --include-data-dir=$TELEGRAM_PATH=telegram \
+            --enable-plugin=pylint-warnings \
+            --output-dir=build_output source/dloadbox-telegrambot.py
 
       - name: Create release notes
         id: generate_notes
