@@ -4,7 +4,7 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 
 # Version info
-VERSION_DLOADBOX="alpha-2.2.1"
+VERSION_DLOADBOX="alpha-2.2.2"
 VERSION_DLOADBOX_CREATE="2024-12-01"
 VERSION_DLOADBOX_UPDATE="2025-02-10"
 VERSION_FILEBROWSER="2.31.2"
@@ -127,7 +127,7 @@ root_check() {
 init_bsics(){
     az_log b "Checking system requirements and preparing environment..."
     sleep 2
-    PKG_DEP="tar wget curl make bzip2 gzip wget unzip sudo netcat"
+    PKG_DEP="tar wget curl make bzip2 gzip wget unzip sudo "
     URL_DLOADBOX="https://github.com/azolfagharj/DloadBox/releases/download/$VERSION_DLOADBOX/dloadbox.zip"
     URL_FILEBROWSER="https://github.com/filebrowser/filebrowser/releases/download/v$VERSION_FILEBROWSER/linux-amd64-filebrowser.tar.gz"
     URL_ARIANG="https://github.com/mayswind/AriaNg/releases/download/$VERSION_ARIANG/AriaNg-$VERSION_ARIANG-AllInOne.zip"
@@ -1009,21 +1009,14 @@ check_port() {
     # Check if port is provided
     if [[ -z $port ]]; then
         az_log br "Error: No port number provided." >&2
-        return 2
+        return 1
     fi
 
-    # Check if nc is available
-    if ! command -v nc &>/dev/null; then
-        az_log br "Error: 'nc' command not found." >&2
-        return 3
-    fi
 
     # Check the port on localhost
-    if nc -z -v localhost "$port" &>/dev/null; then
-
+    if (echo > /dev/tcp/127.0.0.1/"$port") &>/dev/null; then
         return 0
     else
-
         return 1
     fi
 }
