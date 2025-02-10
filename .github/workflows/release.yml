@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   create-release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
