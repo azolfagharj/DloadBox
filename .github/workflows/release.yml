@@ -18,19 +18,14 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install nuitka
           apt update && apt install -y patchelf zip
-          pip install python-telegram-bot
+          pip install nuitka python-telegram-bot
 
       - name: Extract version number
         id: extract_version
         run: |
           VERSION=$(grep VERSION_DLOADBOX bin/dloadbox-installer.sh | head -n 1 | awk -F '"' '{print $2}')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-      - name: Find Telegram package path
-        id: find_telegram_path
-        run: echo "TELEGRAM_PATH=$(python -c 'import telegram; print(telegram.__path__[0])')" >> $GITHUB_ENV
 
       - name: Build binary with Nuitka
         run: |
@@ -40,7 +35,6 @@ jobs:
             --include-package=logging \
             --include-package=os \
             --include-package=telegram \
-            --include-data-dir=${{ env.TELEGRAM_PATH }}=telegram \
             --enable-plugin=pylint-warnings \
             --output-dir=build_output source/dloadbox-telegrambot.py
           mv build_output/dloadbox-telegrambot bin/dloadbox-telegrambot
