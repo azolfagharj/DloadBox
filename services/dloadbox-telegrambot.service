@@ -1,0 +1,9 @@
+[Unit]
+Description=DloadBox Telegram Bot
+After=network.target
+
+[Service]
+ExecStart=/opt/dloadbox/bin/dloadbox-telegrambot
+
+[Install]
+WantedBy=multi-user.target

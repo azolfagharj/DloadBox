@@ -72,7 +72,6 @@ jobs:
           body_path: ./release_notes.md
           files: |
             bin/dloadbox-installer.sh
-            bin/dloadbox-telegrambot
             dloadbox.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
