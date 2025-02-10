@@ -4,7 +4,7 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 
 # Version info
-VERSION_DLOADBOX="alpha-2.2.2"
+VERSION_DLOADBOX="alpha-2.2.3"
 VERSION_DLOADBOX_CREATE="2024-12-01"
 VERSION_DLOADBOX_UPDATE="2025-02-10"
 VERSION_FILEBROWSER="2.31.2"
@@ -24,6 +24,15 @@ NC='\033[0m'
 BOLD='\033[1m'
 # date format
 DATE_FORMAT='+%Y-%m-%d %H:%M:%S'
+#Detect Demo mode
+DEMO_MODE=false
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --demo) DEMO_MODE=true ;;
+    esac
+    shift
+done
+#
 display_logo() {
     echo ""
     echo -e "                ${BLUE}██████╗ ${GREEN}██╗      ██████╗  █████╗ ██████╗ ${CYAN}██████╗  ██████╗ ██╗  ██╗${NC}"
@@ -566,6 +575,10 @@ install_webserver2() {
     if CONFIG_CADDY_PASSWORD=$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 25); then
         az_log bg "Password have been successfully generated"
         az_log b "Generating password hash"
+        # for demo mode
+        if [ "$DEMO_MODE" = true ]; then
+            CONFIG_CADDY_PASSWORD="demo"
+        fi
         if CONFIG_CADDY_PASSWORD_HASH=$(/opt/dloadbox/bin/dloadbox-caddy hash-password --plaintext "$CONFIG_CADDY_PASSWORD"); then
             az_log bg "Password hash have been successfully generated"
         else
@@ -914,6 +927,11 @@ install_filebrowser() {
         az_log bg "Password have been successfully generated"
         az_log b "making password hash"
         sleep 1
+        # for demo mode
+        if [ "$DEMO_MODE" = true ]; then
+            CONFIG_FILEBROWSER_PASSWORD="demo"
+        fi
+        #
         if CONFIG_FILEBROWSER_PASSWORD_HASH=$(dloadbox-filebrowser hash "$CONFIG_FILEBROWSER_PASSWORD") &>/dev/null; then
             az_log bg "Password hash have been successfully created"
             az_log b "Configuring filebrowser"
@@ -1272,18 +1290,21 @@ install_telegrambot2() {
     az_log b "4. Copy the bot token that looks like this:"
     az_log b "Example: 123456789:FAKE_TOKEN_DO_NOT_USE_THIS_12345678"
     echo
-
-    while true; do
-        read -r -p "Please enter your Telegram bot token: " CONFIG_TELEGRAMBOT_BOT_TOKEN
+    if [ "$DEMO_MODE" = true ]; then
+        CONFIG_TELEGRAMBOT_BOT_TOKEN="7732807888:AAGJMI0RcKH3PzG0lq_VQl-ADAbpheD31yI"
+    else
+        while true; do
+            read -r -p "Please enter your Telegram bot token: " CONFIG_TELEGRAMBOT_BOT_TOKEN
 
         # Validate token format using regex
         if [[ $CONFIG_TELEGRAMBOT_BOT_TOKEN =~ ^[0-9]+:[-_a-zA-Z0-9]+$ ]]; then
             az_log bg "✅ Valid token format"
             break
         else
-            az_log br "❌ Invalid token format. Please try again"
-        fi
-    done
+                az_log br "❌ Invalid token format. Please try again"
+            fi
+        done
+    fi
 
     # Save token to config file
     if sed -i "s|^BOT_TOKEN=.*|BOT_TOKEN=${CONFIG_TELEGRAMBOT_BOT_TOKEN}|" /opt/dloadbox/config/dloadbox-telegrambot.conf > /dev/null; then
@@ -1299,9 +1320,12 @@ install_telegrambot2() {
     az_log s "Please select the privacy level for your Telegram bot:"
     az_log s "1 - Anyone can use the bot"
     az_log s "2 - Only specific users can use the bot"
-
-    while true; do
-        read -r -p "Enter your choice (1 or 2): " choice
+    if [ "$DEMO_MODE" = true ]; then
+        CONFIG_TELEGRAMBOT_LIMIT_PERMISSION=false
+        CONFIG_TELEGRAMBOT_ALLOWED_USERNAMES="ALL"
+    else
+        while true; do
+            read -r -p "Enter your choice (1 or 2): " choice
 
         case $choice in
             1)
@@ -1320,6 +1344,7 @@ install_telegrambot2() {
                 ;;
         esac
     done
+    fi
     if [[ "$CONFIG_TELEGRAMBOT_LIMIT_PERMISSION" == "true" ]]; then
         sed -i '/LIMIT_PERMISSION/c\LIMIT_PERMISSION=true' /opt/dloadbox/config/dloadbox-telegrambot.conf > /dev/null
         if grep -q "LIMIT_PERMISSION=true" /opt/dloadbox/config/dloadbox-telegrambot.conf; then
