@@ -18,7 +18,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apt update && apt install -y patchelf zip
+          sudo apt update && sudo apt install -y patchelf zip
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
           pip install nuitka python-telegram-bot
 
       - name: Extract version number
@@ -29,6 +32,7 @@ jobs:
 
       - name: Build binary with Nuitka
         run: |
+          source venv/bin/activate
           mkdir -p build_output
           nuitka --standalone --onefile \
             --include-package=requests \
