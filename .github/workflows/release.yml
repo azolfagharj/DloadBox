@@ -16,11 +16,31 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Install dependencies
+        run: |
+          sudo apt update && sudo apt install -y patchelf zip
+          python3 -m pip install --upgrade pip
+          pip install nuitka python-telegram-bot requests
+
       - name: Extract version number
         id: extract_version
         run: |
           VERSION=$(grep VERSION_DLOADBOX bin/dloadbox-installer.sh | head -n 1 | awk -F '"' '{print $2}')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Build binary with Nuitka
+        run: |
+          mkdir -p build_output
+          nuitka --standalone --onefile \
+            --include-package=requests \
+            --include-package=logging \
+            --include-package=os \
+            --include-package=telegram \
+            --include-data-dir=/usr/local/lib/python3.10/site-packages/telegram=telegram \
+            --enable-plugin=pylint-warnings \
+            --output-dir=build_output \
+            source/dloadbox-telegrambot.py
+          mv build_output/dloadbox-telegrambot.bin bin/dloadbox-telegrambot
 
       - name: Create release notes
         id: generate_notes
@@ -45,6 +65,7 @@ jobs:
           body_path: ./release_notes.md
           files: |
             bin/dloadbox-installer.sh
+            bin/dloadbox-telegrambot
             dloadbox.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
