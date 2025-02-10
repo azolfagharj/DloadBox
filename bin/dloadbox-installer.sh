@@ -161,20 +161,20 @@ package_installer() {
     local package=$1
 
     # Detect package manager
-    if command -v apt-get &>/dev/null; then
+    if command -v apt-get > /dev/null; then
         PKG_MGR="apt-get"
         PKG_CMD="apt-get install -y"
-        apt-get update &>/dev/null
-    elif command -v dnf &>/dev/null; then
+        apt-get update > /dev/null
+    elif command -v dnf > /dev/null; then
         PKG_MGR="dnf"
         PKG_CMD="dnf install -y"
-    elif command -v yum &>/dev/null; then
+    elif command -v yum > /dev/null; then
         PKG_MGR="yum"
         PKG_CMD="yum install -y"
-    elif command -v zypper &>/dev/null; then
+    elif command -v zypper > /dev/null; then
         PKG_MGR="zypper"
         PKG_CMD="zypper install -y"
-    elif command -v pacman &>/dev/null; then
+    elif command -v pacman > /dev/null; then
         PKG_MGR="pacman"
         PKG_CMD="pacman -S --noconfirm"
     else
@@ -208,7 +208,7 @@ package_installer() {
     # Install package
     az_log b "📦 Installing '$package' using ${PKG_MGR}..."
     # shellcheck disable=SC2086
-    if $PKG_CMD $package &>/dev/null; then
+    if $PKG_CMD $package > /dev/null; then
         az_log bg "✅ Package '$package' installed successfully"
     else
         az_log br "❌ Failed to install package: $package"
@@ -1418,6 +1418,7 @@ install_telegrambot2() {
 }
 show_dloadbox_info() {
     reset && clear
+    display_logo
     CONFIG_ARIANG_RPC_SECRET_HASH=$(echo -n "$CONFIG_ARIA2_RPC_SECRET" | base64 | tr '+/' '-_' | sed 's/=//g')
     CONFIG_TELEGRAMBOT_BOT_USERNAME=$(curl -s "https://api.telegram.org/bot$CONFIG_TELEGRAMBOT_BOT_TOKEN/getMe" | grep -o '"username":"[^"]*"' | sed -E 's/"username":"(.*)"/\1/')
     CONFIG_ARIANG_URL="http://${CONFIG_IP_MAIN}:${CONFIG_WEBSERVER_PORT}/dloadbox.html#!/settings/rpc/set/http/${CONFIG_IP_MAIN}/${CONFIG_ARIA2_RPC_LISTEN_PORT}/jsonrpc/${CONFIG_ARIANG_RPC_SECRET_HASH}"
