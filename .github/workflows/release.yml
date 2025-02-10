@@ -19,10 +19,8 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update && sudo apt install -y patchelf zip
-          python3 -m venv venv
-          source venv/bin/activate
-          pip install --upgrade pip
-          pip install nuitka python-telegram-bot
+          python3 -m pip install --upgrade pip
+          pip install nuitka python-telegram-bot requests
 
       - name: Extract version number
         id: extract_version
@@ -32,20 +30,18 @@ jobs:
 
       - name: Build binary with Nuitka
         run: |
-          source venv/bin/activate
           mkdir -p build_output
+          cd build_output
           nuitka --standalone --onefile \
             --include-package=requests \
             --include-package=logging \
             --include-package=os \
             --include-package=telegram \
-            --enable-plugin=pylint-warnings \
-            --output-dir=build_output source/dloadbox-telegrambot.py
-          mv build_output/dloadbox-telegrambot bin/dloadbox-telegrambot
-
-      - name: Create dloadbox.zip
-        run: |
-          zip -r dloadbox.zip . -x ".git/*" ".github/*" "release_notes.md"
+            --include-data-dir=/usr/local/lib/python3.10/site-packages/telegram=telegram \
+            --enable-plugin=pylint-warnings dloadbox-telegrambot.py
+          mv dloadbox-telegrambot.bin bin/dloadbox-telegrambot
+          cd ..
+          rm -rf build_output
 
       - name: Create release notes
         id: generate_notes
@@ -57,6 +53,10 @@ jobs:
           echo "chmod +x dloadbox-installer.sh" >> release_notes.md
           echo "./dloadbox-installer.sh" >> release_notes.md
           echo "\`\`\`" >> release_notes.md
+
+      - name: Create dloadbox.zip
+        run: |
+          zip -r dloadbox.zip . -x ".git/*" ".github/*" "release_notes.md"
 
       - name: Create release
         uses: softprops/action-gh-release@v1
