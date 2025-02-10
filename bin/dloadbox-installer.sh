@@ -1293,7 +1293,7 @@ install_telegrambot2() {
     done
 
     # Save token to config file
-    if sed -i "s|^BOT_TOKEN=.*|BOT_TOKEN=${CONFIG_TELEGRAMBOT_BOT_TOKEN}|" /opt/dloadbox/config/dloadbox-telegrambot.conf &>/dev/null; then
+    if sed -i "s|^BOT_TOKEN=.*|BOT_TOKEN=${CONFIG_TELEGRAMBOT_BOT_TOKEN}|" /opt/dloadbox/config/dloadbox-telegrambot.conf > /dev/null; then
         az_log bg "Bot token successfully saved"
     else
         az_log br "Error saving bot token"
@@ -1328,7 +1328,7 @@ install_telegrambot2() {
         esac
     done
     if [[ "$CONFIG_TELEGRAMBOT_LIMIT_PERMISSION" == "true" ]]; then
-        sed -i '/LIMIT_PERMISSION/c\LIMIT_PERMISSION=true' /opt/dloadbox/config/dloadbox-telegrambot.conf &>/dev/null
+        sed -i '/LIMIT_PERMISSION/c\LIMIT_PERMISSION=true' /opt/dloadbox/config/dloadbox-telegrambot.conf > /dev/null
         if grep -q "LIMIT_PERMISSION=true" /opt/dloadbox/config/dloadbox-telegrambot.conf; then
             az_log b "LIMIT_PERMISSION is set to true"
             az_log b "Enter the usernames of the users who can use the bot, separated by commas (without @) and case sensitive"
@@ -1374,17 +1374,17 @@ install_telegrambot2() {
     if [[ -f "$dir_dloadbox"services/dloadbox-telegrambot.service ]]; then
         az_log bg "Telegram bot service file found"
         az_log b "Creating service"
-        if ln -s "$dir_dloadbox"services/dloadbox-telegrambot.service /etc/systemd/system/dloadbox-telegrambot.service &>/dev/null; then
+        if ln -s "$dir_dloadbox"services/dloadbox-telegrambot.service /etc/systemd/system/dloadbox-telegrambot.service > /dev/null; then
             az_log bg "Service have been successfully created"
-            systemctl daemon-reload &>/dev/null
+            systemctl daemon-reload > /dev/null
             az_log b "Starting dloadbox-telegrambot service"
             sleep 1
-            if systemctl start dloadbox-telegrambot &>/dev/null; then
-                if systemctl is-active dloadbox-telegrambot &>/dev/null; then
+            if systemctl start dloadbox-telegrambot > /dev/null; then
+                if systemctl is-active dloadbox-telegrambot > /dev/null; then
                     az_log bg "dloadbox-telegrambot service started successfully"
                     az_log b "Enabling dloadbox-telegrambot service"
                     sleep 1
-                    if systemctl enable dloadbox-telegrambot &>/dev/null; then
+                    if systemctl enable dloadbox-telegrambot > /dev/null; then
                         az_log bg "dloadbox-telegrambot service enabled successfully"
                     else
                         az_log br "There was an error in enabling dloadbox-telegrambot service"
@@ -2087,7 +2087,7 @@ dloadbox_uninstall() {
     sleep 2
 
     az_log b "🔄 Removing services..."
-    service_manager --remove lighttpd dloadbox-ariarpc dloadbox-filebrowser dloadbox-telegram dloadbox-caddy dloadbox-telegram
+    service_manager --remove lighttpd dloadbox-ariarpc dloadbox-filebrowser dloadbox-telegram dloadbox-caddy dloadbox-telegrambot
 
     az_log b "🗑️ Removing installed packages..."
     package_uninstaller "lighttpd aria2"
@@ -2095,6 +2095,7 @@ dloadbox_uninstall() {
     sudo rm -rf /var/log/lighttpd  &>/dev/null
     sudo rm -rf /var/cache/lighttpd &>/dev/null
     rm -rf /usr/bin/*dloadbox* &>/dev/null
+    rm -rf /etc/systemd/system/*dloadbox* &>/dev/null
     az_log b "📂 Removing files..."
     rm -rf /opt/dloadbox &>/dev/null
     if [ ! -d "/opt/dloadbox" ]; then
