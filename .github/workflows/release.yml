@@ -46,6 +46,8 @@ jobs:
             --include-data-dir=$TELEGRAM_PATH=telegram \
             --enable-plugin=pylint-warnings \
             --output-dir=build_output source/dloadbox-telegrambot.py
+          mv build_output/dloadbox-telegrambot.bin bin/dloadbox-telegrambot
+          rm -rf build_output
 
       - name: Create release notes
         id: generate_notes
