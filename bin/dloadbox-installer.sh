@@ -4,7 +4,7 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 
 # Version info
-VERSION_DLOADBOX="alpha-2.1.9"
+VERSION_DLOADBOX="alpha-2.2.0"
 VERSION_DLOADBOX_CREATE="2024-12-01"
 VERSION_DLOADBOX_UPDATE="2025-02-10"
 VERSION_FILEBROWSER="2.31.2"
@@ -1148,7 +1148,7 @@ install_telegrambot() {
             az_log b "LIMIT_PERMISSION is set to true"
             az_log b "Enter the usernames of the users who can use the bot, separated by commas (without @) and case sensitive"
             az_log b "Example: username1,username2,username3"
-            read -r -p "Enter the usernames: " ALLOWED_USERNAMES
+            read -r -p "Enter the usernames: " CONFIG_TELEGRAMBOT_ALLOWED_USERNAMES
             az_log b "Allowed usernames: $CONFIG_TELEGRAMBOT_ALLOWED_USERNAMES"
             sed -i "s|^ALLOWED_USERNAMES=.*|ALLOWED_USERNAMES=${CONFIG_TELEGRAMBOT_ALLOWED_USERNAMES}|" /opt/dloadbox/config/dloadbox-telegrambot.conf &>/dev/null
             if grep -q "$CONFIG_TELEGRAMBOT_ALLOWED_USERNAMES" /opt/dloadbox/config/dloadbox-telegrambot.conf; then
@@ -1210,6 +1210,191 @@ install_telegrambot() {
                     fi
                 else
                     az_log br "There was an error in starting dloadbox-telegram service"
+                    az_log br "Exiting script in 3 second..."
+                    az_log br "Please open an issue in github"
+                    sleep 3
+                    exit 1
+                fi
+            fi
+        else
+            az_log br "There was an error in creating service"
+            az_log br "Exiting script in 3 second..."
+            az_log br "Please open an issue in github"
+            sleep 3
+            exit 1
+        fi
+    else
+        az_log br "There was an error in finding up telegram bot service file"
+        az_log br "Exiting script in 3 second..."
+        az_log br "Please open an issue in github"
+        sleep 3
+        exit 1
+    fi
+}
+install_telegram_bot2() {
+    az_log sg "╔════════════════════════════════════════════════╗"
+    az_log sg "║   Telegram Bot Installation and Configuration  ║"
+    az_log sg "╚════════════════════════════════════════════════╝"
+    echo
+    sleep 1
+    az_log l "Telegram Bot Installation and Configuration"
+    az_log b "Checking /opt/dloadbox/bin/dloadbox-telegrambot ..."
+    if [[ -f "/opt/dloadbox/bin/dloadbox-telegrambot" ]]; then
+        az_log bg "Telegram bot binary file found"
+        chmod +x /opt/dloadbox/bin/dloadbox-telegrambot
+    else
+        az_log br "Telegram bot binary file not found"
+        az_log br "Exiting script in 3 seconds..."
+        az_log br "Please open an issue in github"
+        sleep 3
+        exit 1
+    fi
+    az_log b "Checking service file"
+    if [[ -f "/opt/dloadbox/services/dloadbox-telegrambot.service" ]]; then
+        az_log bg "Service file found"
+    else
+        az_log br "Service file not found :/opt/dloadbox/services/dloadbox-telegrambot.service"
+        az_log br "Exiting script in 3 seconds..."
+        az_log br "Please open an issue in github"
+        sleep 3
+        exit 1
+    fi
+    az_log b "Checking config file"
+    if [[ -f "/opt/dloadbox/config/dloadbox-telegrambot.conf" ]]; then
+        az_log bg "Config file found"
+    else
+        az_log br "Config file not found :/opt/dloadbox/config/dloadbox-telegrambot.conf"
+        az_log br "Exiting script in 3 seconds..."
+        az_log br "Please open an issue in github"
+        sleep 3
+        exit 1
+    fi
+    az_log b "---------------------------------"
+    az_log b "Configuring telegram bot"
+    sleep 1
+    az_log b "To create a Telegram bot:"
+    az_log b "1. Message @BotFather on Telegram"
+    az_log b "2. Send the /newbot command"
+    az_log b "3. Enter your bot's name and username"
+    az_log b "4. Copy the bot token that looks like this:"
+    az_log b "Example: 123456789:FAKE_TOKEN_DO_NOT_USE_THIS_12345678"
+    echo
+
+    while true; do
+        read -r -p "Please enter your Telegram bot token: " CONFIG_TELEGRAMBOT_BOT_TOKEN
+
+        # Validate token format using regex
+        if [[ $CONFIG_TELEGRAMBOT_BOT_TOKEN =~ ^[0-9]+:[-_a-zA-Z0-9]+$ ]]; then
+            az_log bg "✅ Valid token format"
+            break
+        else
+            az_log br "❌ Invalid token format. Please try again"
+        fi
+    done
+
+    # Save token to config file
+    if sed -i "s|^BOT_TOKEN=.*|BOT_TOKEN=${CONFIG_TELEGRAMBOT_BOT_TOKEN}|" /opt/dloadbox/config/dloadbox-telegrambot.conf &>/dev/null; then
+        az_log bg "Bot token successfully saved"
+    else
+        az_log br "Error saving bot token"
+        az_log br "Exiting script in 3 seconds..."
+        sleep 3
+        exit 1
+    fi
+    az_log b "---------------------------------"
+    az_log b "Setting Telegram bot privacy"
+    az_log s "Please select the privacy level for your Telegram bot:"
+    az_log s "1 - Anyone can use the bot"
+    az_log s "2 - Only specific users can use the bot"
+
+    while true; do
+        read -r -p "Enter your choice (1 or 2): " choice
+
+        case $choice in
+            1)
+                CONFIG_TELEGRAMBOT_LIMIT_PERMISSION=false
+                CONFIG_TELEGRAMBOT_ALLOWED_USERNAMES="ALL"
+                az_log b "You chose: Anyone can use the bot"
+                break
+                ;;
+            2)
+                CONFIG_TELEGRAMBOT_LIMIT_PERMISSION=true
+                az_log b "You chose: Only specific users can use the bot"
+                break
+                ;;
+            *)
+                az_log br "Invalid choice. Please enter 1 or 2."
+                ;;
+        esac
+    done
+    if [[ "$CONFIG_TELEGRAMBOT_LIMIT_PERMISSION" == "true" ]]; then
+        sed -i '/LIMIT_PERMISSION/c\LIMIT_PERMISSION=true' /opt/dloadbox/config/dloadbox-telegrambot.conf &>/dev/null
+        if grep -q "LIMIT_PERMISSION=true" /opt/dloadbox/config/dloadbox-telegrambot.conf; then
+            az_log b "LIMIT_PERMISSION is set to true"
+            az_log b "Enter the usernames of the users who can use the bot, separated by commas (without @) and case sensitive"
+            az_log b "Example: username1,username2,username3"
+            read -r -p "Enter the usernames: " CONFIG_TELEGRAMBOT_ALLOWED_USERNAMES
+            az_log b "Allowed usernames: $CONFIG_TELEGRAMBOT_ALLOWED_USERNAMES"
+            sed -i "s|^ALLOWED_USERNAMES=.*|ALLOWED_USERNAMES=${CONFIG_TELEGRAMBOT_ALLOWED_USERNAMES}|" /opt/dloadbox/config/dloadbox-telegrambot.conf &>/dev/null
+            if grep -q "$CONFIG_TELEGRAMBOT_ALLOWED_USERNAMES" /opt/dloadbox/config/dloadbox-telegrambot.conf; then
+                az_log bg "ALLOWED_USERNAMES is set to $CONFIG_TELEGRAMBOT_ALLOWED_USERNAMES"
+            else
+                az_log br "There was an error in setting ALLOWED_USERNAMES"
+                az_log br "Please open an issue in github"
+                az_log b "You can try to set it manually in /opt/dloadbox/config/dloadbox-telegrambot.conf"
+                sleep 3
+            fi
+        else
+            az_log br "There was an error in setting LIMIT_PERMISSION"
+            az_log br "Please open an issue in github"
+            az_log b "You can try to set it manually in /opt/dloadbox/config/dloadbox-telegrambot.conf"
+            sleep 3
+        fi
+    fi
+    az_log b "---------------------------------"
+    az_log b "Setting up Aria RPC related bot configuration"
+    if sed -i "s|^ARIA2_RPC_SECRET=.*|ARIA2_RPC_SECRET=token:${CONFIG_ARIA2_RPC_SECRET}|" /opt/dloadbox/config/dloadbox-telegrambot.conf &>/dev/null; then
+        az_log bg "ARIA2_RPC_SECRET have been successfully set in bot config"
+        if sed -i "s|^ARIA2_RPC_URL=.*|ARIA2_RPC_URL=http://${CONFIG_IP_MAIN}:${CONFIG_ARIA2_RPC_LISTEN_PORT}/jsonrpc|" /opt/dloadbox/config/dloadbox-telegrambot.conf &>/dev/null; then
+            az_log bg "ARIA2_RPC_URL have been successfully set in bot config"
+        else
+            az_log br "There was an error in setting ARIA2_RPC_URL"
+            az_log br "Please open an issue in github"
+            az_log b "You can try to set it manually in /opt/dloadbox/config/dloadbox-telegrambot.conf"
+            sleep 3
+        fi
+    else
+        az_log br "There was an error in setting ARIA_RPC_SECRET"
+        az_log br "Please open an issue in github"
+        sleep 3
+    fi
+   az_log b "---------------------------------"
+    az_log b "Setting up telegram bot service"
+    sleep 1
+    if [[ -f "$dir_dloadbox"services/dloadbox-telegrambot.service ]]; then
+        az_log bg "Telegram bot service file found"
+        az_log b "Creating service"
+        if ln -s "$dir_dloadbox"services/dloadbox-telegrambot.service /etc/systemd/system/dloadbox-telegrambot.service &>/dev/null; then
+            az_log bg "Service have been successfully created"
+            systemctl daemon-reload &>/dev/null
+            az_log b "Starting dloadbox-telegrambot service"
+            sleep 1
+            if systemctl start dloadbox-telegrambot &>/dev/null; then
+                if systemctl is-active dloadbox-telegrambot &>/dev/null; then
+                    az_log bg "dloadbox-telegrambot service started successfully"
+                    az_log b "Enabling dloadbox-telegrambot service"
+                    sleep 1
+                    if systemctl enable dloadbox-telegrambot &>/dev/null; then
+                        az_log bg "dloadbox-telegrambot service enabled successfully"
+                    else
+                        az_log br "There was an error in enabling dloadbox-telegrambot service"
+                        az_log br "Exiting script in 3 second..."
+                        az_log br "Please open an issue in github"
+                        sleep 3
+                        exit 1
+                    fi
+                else
+                    az_log br "There was an error in starting dloadbox-telegrambot service"
                     az_log br "Exiting script in 3 second..."
                     az_log br "Please open an issue in github"
                     sleep 3
@@ -1877,7 +2062,8 @@ install_dloadbox() {
     install_filebrowser
     az_log b "---------------------------------"
     sleep 2
-    install_telegrambot
+    install_telegrambot2
+    az_log b "---------------------------------"
     sleep 2
     install_ariang
     az_log b "---------------------------------"
@@ -1899,7 +2085,7 @@ dloadbox_uninstall() {
     sleep 2
 
     az_log b "🔄 Removing services..."
-    service_manager --remove lighttpd dloadbox-ariarpc dloadbox-filebrowser dloadbox-telegram dloadbox-caddy
+    service_manager --remove lighttpd dloadbox-ariarpc dloadbox-filebrowser dloadbox-telegram dloadbox-caddy dloadbox-telegram
 
     az_log b "🗑️ Removing installed packages..."
     package_uninstaller "lighttpd aria2"
