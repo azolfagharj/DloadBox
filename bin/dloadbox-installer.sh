@@ -1231,7 +1231,7 @@ install_telegrambot() {
         exit 1
     fi
 }
-install_telegram_bot2() {
+install_telegrambot2() {
     az_log sg "╔════════════════════════════════════════════════╗"
     az_log sg "║   Telegram Bot Installation and Configuration  ║"
     az_log sg "╚════════════════════════════════════════════════╝"
@@ -1486,6 +1486,7 @@ show_dloadbox_info() {
         echo "VERSION_DLOADBOX_UPDATE=$VERSION_DLOADBOX_UPDATE"
         echo "VERSION_FILEBROWSER=$VERSION_FILEBROWSER"
         echo "VERSION_ARIANG=$VERSION_ARIANG"
+        echo "VERSION_CADDY=$VERSION_CADDY"
         echo "# Network"
         echo "INTERNALCONFIG_IP_MAIN=$CONFIG_IP_MAIN"
         echo "INTERNALCONFIG_INTERFACE_MAIN=$CONFIG_INTERFACE_MAIN"
