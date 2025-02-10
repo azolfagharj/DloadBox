@@ -7,7 +7,7 @@
 ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═════╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝
                 Full Download and File Manager Platform
                                     ‌by  A.ZOLFAGHAR
-                               
+
 ```
 # DloadBox
 DloadBox is a complete download management platform combining aria2c, Caddy, ariaNG, RPC integration, and a Telegram bot. It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
@@ -25,10 +25,8 @@ Currently, it has been tested only on Ubuntu, but it is designed for all 64-bit 
 Download and Run the installer using the following commands:
 
 ```
-wget https://github.com/azolfagharj/DloadBox/releases/latest/download/dloadbox-installer.sh
-
-chmod +x dloadbox-installer.sh
-
+wget https://github.com/azolfagharj/DloadBox/releases/latest/download/dloadbox-installer.sh \
+chmod +x dloadbox-installer.sh \
 ./dloadbox-installer.sh
 
 ```

@@ -18,7 +18,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt update && sudo apt install -y patchelf zip ccache clang
+          sudo apt update && sudo apt install -y patchelf zip
           python3 -m pip install --upgrade pip
           pip install nuitka python-telegram-bot requests
 
@@ -35,16 +35,10 @@ jobs:
           echo "TELEGRAM_PATH=$TELEGRAM_PATH" >> $GITHUB_ENV
           echo "Found Telegram package at: $TELEGRAM_PATH"
 
-      - name: Configure ccache (1GB)
-        run: |
-          export CC="ccache gcc"
-          export CXX="ccache g++"
-          ccache --max-size=1G
-
       - name: Build binary with Nuitka
         run: |
           mkdir -p build_output
-          nuitka --standalone --onefile --clang\
+          nuitka --standalone --onefile \
             --include-package=requests \
             --include-package=logging \
             --include-package=os \
