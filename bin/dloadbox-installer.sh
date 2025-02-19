@@ -4,7 +4,7 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 
 # Version info
-VERSION_DLOADBOX="alpha-2.2.4"
+VERSION_DLOADBOX="alpha-2.2.5"
 VERSION_DLOADBOX_CREATE="2024-12-01"
 VERSION_DLOADBOX_UPDATE="2025-02-19"
 VERSION_FILEBROWSER="2.31.2"
@@ -669,7 +669,19 @@ install_aria2() {
     echo
     sleep 1
     az_log l "Download Manager Installation and Configuration"
-    package_installer "aria2"
+    #package_installer "aria2"
+    if [[ ! -f /opt/dloadbox/bin/dloadbox-aria2c ]]; then
+        az_log br "Can't find aria2c binary"
+        az_log br "Exiting script in 3 second..."
+        az_log br "Please open an issue in github"
+        sleep 3
+        exit 1
+    fi
+    az_log bg "Aria2c binary is in place"
+    az_log b "Setting aria2c binary permissions"
+    chmod +x /opt/dloadbox/bin/dloadbox-aria2c &>/dev/null
+    az_log bg "Aria2c binary permissions have been successfully set"
+    sleep 1
     az_log b "---------------------------------"
     az_log b "Setting up aria2 config"
     sleep 1

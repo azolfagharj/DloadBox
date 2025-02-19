@@ -31,3 +31,22 @@ chmod +x dloadbox-installer.sh && \
 
 ```
 That's it! The installer will handle everything for you automatically.
+
+## Open-Source Software Used in This Project
+
+This platform utilizes various open-source projects to provide its core functionalities. Below is a list of the software used, along with their respective licenses and purposes:
+
+- **[Caddy](https://github.com/caddyserver/caddy)** – Used as the web server.
+  - **License**: [Apache License 2.0](https://github.com/caddyserver/caddy/blob/master/LICENSE)
+
+- **[aria2](https://github.com/aria2/aria2)** – Used as the download manager.
+  - **License**: [GNU General Public License (GPL) v2](https://github.com/aria2/aria2/blob/master/COPYING)
+
+- **[aria2-static-builds](https://git.q3aql.dev/q3aql/aria2-static-builds)** – Prebuilt static binaries of aria2 used for easier deployment.
+  - **License**: [GNU General Public License (GPL) v2](https://github.com/aria2/aria2/blob/master/COPYING)
+
+- **[AriaNg](https://github.com/mayswind/AriaNg)** – A web-based frontend for aria2.
+  - **License**: [MIT License](https://github.com/mayswind/AriaNg/blob/master/LICENSE)
+
+- **[File Browser](https://github.com/filebrowser/filebrowser)** – Used as the file manager to browse and manage downloaded files.
+  - **License**: [Apache License 2.0](https://github.com/filebrowser/filebrowser/blob/main/LICENSE)

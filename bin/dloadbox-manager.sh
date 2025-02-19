@@ -4,12 +4,13 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 #region version
 # Version info
-VERSION_DLOADBOX="alpha-2.2.4"
+VERSION_DLOADBOX="alpha-2.2.5"
 VERSION_DLOADBOX_CREATE="2024-12-01"
 VERSION_DLOADBOX_UPDATE="2025-02-19"
 VERSION_FILEBROWSER="2.31.2"
 VERSION_ARIANG="1.3.8"
 VERSION_CADDY="2.9.1"
+VERSION_ARIA2C="1.37.0"
 #endregion
 init_variables(){
     #region URL
@@ -42,7 +43,7 @@ init_variables(){
     file_service_telegram_bot="/opt/dloadbox/services/dloadbox-telegrambot.service"
     file_service_filebrowser="/opt/dloadbox/services/dloadbox-filebrowser.service"
     # Binaries
-    file_bin_aria2c="/usr/bin/aria2c"
+    file_bin_aria2c="/opt/dloadbox/bin/dloadbox-aria2c"
     file_bin_caddy="/opt/dloadbox/bin/dloadbox-caddy"
     file_bin_telegram_bot="/opt/dloadbox/bin/dloadbox-telegrambot"
     file_bin_filebrowser="/opt/dloadbox/bin/dloadbox-filebrowser"
