@@ -25,8 +25,8 @@ Currently, it has been tested only on Ubuntu, but it is designed for all 64-bit 
 Download and Run the installer using the following commands:
 
 ```
-wget https://github.com/azolfagharj/DloadBox/releases/latest/download/dloadbox-installer.sh \
-chmod +x dloadbox-installer.sh \
+wget https://github.com/azolfagharj/DloadBox/releases/latest/download/dloadbox-installer.sh && \
+chmod +x dloadbox-installer.sh && \
 ./dloadbox-installer.sh
 
 ```
