@@ -61,7 +61,7 @@ jobs:
 
       - name: Create dloadbox.zip
         run: |
-          zip -r dloadbox.zip . -x ".git/*" ".github/*" "release_notes.md"
+          zip -r dloadbox.zip . -x ".git/*" ".github/*" "release_notes.md" "images/*"
 
       - name: Create release
         uses: softprops/action-gh-release@v1

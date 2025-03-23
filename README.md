@@ -11,6 +11,19 @@
 ```
 # DloadBox
 DloadBox is a complete download management platform combining aria2c, Caddy, ariaNG, RPC integration, and a Telegram bot. It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
+
+# Screenshots
+
+<p align="center">
+  <a href="images/1.JPG"><img src="images/1.JPG" width="15%"></a>
+  <a href="images/2.JPG"><img src="images/2.JPG" width="15%"></a>
+  <a href="images/3.JPG"><img src="images/3.JPG" width="15%"></a>
+  <a href="images/4.JPG"><img src="images/4.JPG" width="15%"></a>
+  <a href="images/5.JPG"><img src="images/5.JPG" width="15%"></a>
+  <a href="images/6.JPG"><img src="images/6.JPG" width="15%"></a>
+  <a href="images/7.JPG"><img src="images/7.JPG" width="15%"></a>
+</p>
+
 # Coming soon...
 # DloadBox - Alpha Version Installer
 

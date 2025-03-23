@@ -4,12 +4,13 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 
 # Version info
-VERSION_DLOADBOX="alpha-2.2.5"
+VERSION_DLOADBOX="alpha-2.2.6"
 VERSION_DLOADBOX_CREATE="2024-12-01"
-VERSION_DLOADBOX_UPDATE="2025-02-19"
+VERSION_DLOADBOX_UPDATE="2025-03-23"
 VERSION_FILEBROWSER="2.31.2"
 VERSION_ARIANG="1.3.9"
 VERSION_CADDY="2.9.1"
+VERSION_ARIA2C="1.37.0"
 # Log file
 LOG_FILE="./dloadbox-install.log"
 # Define colors
