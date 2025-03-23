@@ -20,7 +20,8 @@ jobs:
         run: |
           sudo apt update && sudo apt install -y patchelf zip
           python3 -m pip install --upgrade pip
-          pip install nuitka python-telegram-bot requests
+          pip install nuitka==2.6.7 python-telegram-bot requests
+
 
       - name: Extract version number
         id: extract_version
