@@ -15,13 +15,17 @@ DloadBox is a complete download management platform combining aria2c, Caddy, ari
 # Screenshots
 
 <p align="center">
-  <a href="images/1.JPG"><img src="images/1.JPG" width="15%"></a>
-  <a href="images/2.JPG"><img src="images/2.JPG" width="15%"></a>
-  <a href="images/3.JPG"><img src="images/3.JPG" width="15%"></a>
-  <a href="images/4.JPG"><img src="images/4.JPG" width="15%"></a>
-  <a href="images/5.JPG"><img src="images/5.JPG" width="15%"></a>
-  <a href="images/6.JPG"><img src="images/6.JPG" width="15%"></a>
-  <a href="images/7.JPG"><img src="images/7.JPG" width="15%"></a>
+  <a href="images/1.JPG"><img src="images/1.JPG" width="8%"></a>
+  <a href="images/2.JPG"><img src="images/2.JPG" width="8%"></a>
+  <a href="images/3.JPG"><img src="images/3.JPG" width="8%"></a>
+  <a href="images/4.JPG"><img src="images/4.JPG" width="8%"></a>
+  <a href="images/5.JPG"><img src="images/5.JPG" width="8%"></a>
+  <a href="images/6.JPG"><img src="images/6.JPG" width="8%"></a>
+  <a href="images/7.JPG"><img src="images/7.JPG" width="8%"></a>
+  <a href="images/8.JPG"><img src="images/8.JPG" width="8%"></a>
+  <a href="images/9.JPG"><img src="images/9.JPG" width="8%"></a>
+  <a href="images/10.JPG"><img src="images/10.JPG" width="8%"></a>
+  <a href="images/11.JPG"><img src="images/11.JPG" width="8%"></a>
 </p>
 
 # Coming soon...

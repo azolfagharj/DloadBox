@@ -4,9 +4,9 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 #region version
 # Version info
-VERSION_DLOADBOX="alpha-2.2.6"
+VERSION_DLOADBOX="alpha-2.2.7"
 VERSION_DLOADBOX_CREATE="2024-12-01"
-VERSION_DLOADBOX_UPDATE="2025-03-23"
+VERSION_DLOADBOX_UPDATE="2025-03-24"
 VERSION_FILEBROWSER="2.31.2"
 VERSION_ARIANG="1.3.8"
 VERSION_CADDY="2.9.1"
@@ -503,9 +503,7 @@ check_hierarchy(){
     local count_success=0
     local count_failed=0
     CHECK_HIERARCHY_ISOK=true
-    sleep 1
     az_log b "Checking DloadBox Files and Directories..."
-    sleep 1
     for item in "${hierarchy[@]}"; do
         ((count++))
         if [[ ! -e "$item" ]]; then
@@ -607,7 +605,7 @@ config_detector(){
     CONFIG_TELEGRAMBOT_BOT_USERNAME=$(curl -s "https://api.telegram.org/bot$CONFIG_TELEGRAMBOT_BOT_TOKEN/getMe" | grep -o '"username":"[^"]*"' | sed -E 's/"username":"(.*)"/\1/')
     # Webserver config
     az_log l "Detecting Webserver Configuration..."
-    CONFIG_WEBSERVER_PORT=$(grep -i server.port "$file_config_webserver" | awk -F'=' '{print substr($2, 2)}')
+    CONFIG_WEBSERVER_PORT=$(grep -i : "$file_config_webserver"  | awk -F'[: ]' '{print $2}')
     # Filebrowser config
     az_log l "Detecting Filebrowser Configuration..."
     CONFIG_FILEBROWSER_PASSWORD_HASH=$(grep -i password "$file_config_filebrowser_json" |  awk -F'"' '{print $4}')
@@ -720,7 +718,7 @@ config_changer(){
         CHANGE_CONFIG_ISOK=false
     fi
     # WEBSERVER PORT
-    if sed -i -E "s/^(server\.port[[:space:]]*=[[:space:]]*)[0-9]+/\1$CONFIG_WEBSERVER_PORT/" "$file_config_webserver"; then
+    if sed -i "s/: *[0-9]\+/:$CONFIG_WEBSERVER_PORT/" "$file_config_webserver"; then
         az_log l "Webserver Port changed to ${CONFIG_WEBSERVER_PORT}"
     else
         az_log br "Error: Failed to change Webserver Port"
@@ -834,14 +832,233 @@ config_changer_info(){
     az_log bg "DloadBox Info file successfully changed"
     return 0
 }
+firewall_config() {
+    local action=""
+    local ports=()
+
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --allow|--remove)
+                action="$1"
+                shift
+                ;;
+            *)
+                ports+=("$1")
+                shift
+                ;;
+        esac
+    done
+
+    # Validate inputs
+    if [ -z "$action" ]; then
+        az_log br "❌ No action specified! Use --allow or --remove"
+        return 1
+    fi
+
+    if [ ${#ports[@]} -eq 0 ]; then
+        az_log br "❌ No ports specified!"
+        return 1
+    fi
+
+    echo
+    az_log sg "╔════════════════════════════════════════════════╗"
+    az_log sg "║           Configuring Firewall Rules           ║"
+    az_log sg "╚════════════════════════════════════════════════╝"
+    echo
+    sleep 1
+
+    # Check and configure UFW
+    if command -v ufw >/dev/null 2>&1; then
+        az_log b "🛡️  Configuring UFW firewall..."
+        for port in "${ports[@]}"; do
+            case "$action" in
+                --allow)
+                    if ufw status | grep -q "$port"; then
+                        az_log bg "⚠️  Port $port is already allowed in UFW"
+                    else
+                        if ufw allow "$port/tcp" >/dev/null 2>&1; then
+                            az_log bg "✅ Successfully allowed port $port in UFW"
+                        else
+                            az_log br "❌ Failed to allow port $port in UFW"
+                        fi
+                    fi
+                    ;;
+                --remove)
+                    if ufw status | grep -q "$port"; then
+                        if ufw delete allow "$port/tcp" >/dev/null 2>&1; then
+                            az_log bg "🗑️  Successfully removed port $port from UFW"
+                        else
+                            az_log br "❌ Failed to remove port $port from UFW"
+                        fi
+                    else
+                        az_log bg "⚠️  Port $port is not configured in UFW"
+                    fi
+                    ;;
+            esac
+        done
+        ufw reload >/dev/null 2>&1
+        az_log b "---------------------------------"
+    fi
+
+    # Check and configure firewalld
+    if command -v firewall-cmd >/dev/null 2>&1; then
+        az_log b "🛡️  Configuring firewalld..."
+        if ! systemctl is-active --quiet firewalld; then
+            systemctl start firewalld >/dev/null 2>&1
+        fi
+        for port in "${ports[@]}"; do
+            case "$action" in
+                --allow)
+                    if firewall-cmd --list-ports | grep -q "$port/tcp"; then
+                        az_log bg "⚠️  Port $port is already allowed in firewalld"
+                    else
+                        if firewall-cmd --permanent --add-port="$port/tcp" >/dev/null 2>&1; then
+                            az_log bg "✅ Successfully allowed port $port in firewalld"
+                        else
+                            az_log br "❌ Failed to allow port $port in firewalld"
+                        fi
+                    fi
+                    ;;
+                --remove)
+                    if firewall-cmd --list-ports | grep -q "$port/tcp"; then
+                        if firewall-cmd --permanent --remove-port="$port/tcp" >/dev/null 2>&1; then
+                            az_log bg "🗑️  Successfully removed port $port from firewalld"
+                        else
+                            az_log br "❌ Failed to remove port $port from firewalld"
+                        fi
+                    else
+                        az_log bg "⚠️  Port $port is not configured in firewalld"
+                    fi
+                    ;;
+            esac
+        done
+        firewall-cmd --reload >/dev/null 2>&1
+        az_log b "---------------------------------"
+    fi
+
+    # Check and configure iptables
+    if command -v iptables >/dev/null 2>&1; then
+        az_log b "🛡️  Configuring iptables..."
+        for port in "${ports[@]}"; do
+            case "$action" in
+                --allow)
+                    if iptables -L INPUT -n | grep -q "dpt:$port"; then
+                        az_log bg "⚠️  Port $port is already allowed in iptables"
+                    else
+                        if iptables -A INPUT -p tcp --dport "$port" -j ACCEPT >/dev/null 2>&1; then
+                            az_log bg "✅ Successfully allowed port $port in iptables"
+                        else
+                            az_log br "❌ Failed to allow port $port in iptables"
+                        fi
+                    fi
+                    ;;
+                --remove)
+                    if iptables -L INPUT -n | grep -q "dpt:$port"; then
+                        if iptables -D INPUT -p tcp --dport "$port" -j ACCEPT >/dev/null 2>&1; then
+                            az_log bg "🗑️  Successfully removed port $port from iptables"
+                        else
+                            az_log br "❌ Failed to remove port $port from iptables"
+                        fi
+                    else
+                        az_log bg "⚠️  Port $port is not configured in iptables"
+                    fi
+                    ;;
+            esac
+        done
+
+        # Save iptables rules for different systems
+        if command -v iptables-save >/dev/null 2>&1; then
+            if [ -d "/etc/iptables" ]; then
+                iptables-save > /etc/iptables/rules.v4 2>/dev/null
+            elif [ -f "/etc/sysconfig/iptables" ]; then
+                iptables-save > /etc/sysconfig/iptables 2>/dev/null
+            fi
+        fi
+        az_log b "---------------------------------"
+    fi
+
+    # If no supported firewall was found
+    if ! command -v ufw >/dev/null 2>&1 && ! command -v firewall-cmd >/dev/null 2>&1 && ! command -v iptables >/dev/null 2>&1; then
+        az_log br "❌ No supported firewall found on the system"
+        return 1
+    fi
+
+    az_log bg "🎉 Firewall configuration completed successfully"
+}
+
+dloadbox_uninstall() {
+    echo -n "Are you sure you want to remove dloadbox along with all its services, files, and settings? (y/n): "
+    read -r uninstall_choice
+    if [[ "$uninstall_choice" =~ ^[Nn]$ ]]; then
+        az_log b "Uninstall canceled"
+        sleep 2
+        menu_uninstall_reinstall
+    elif [[ "$uninstall_choice" =~ ^[Yy]$ ]]; then
+        az_log b "🗑️ Uninstalling DloadBox..."
+        LOG_FILE="/var/log/dloadbox-uninstall.log"
+        true > "$LOG_FILE"
+    else
+        az_log br "Invalid input"
+        sleep 2
+        menu_uninstall_reinstall
+    fi
+    sleep 2
+    az_log b "Reading DloadBox Configurations..."
+    config_detector
+    az_log b "🔄 Removing services..."
+    service_manager --remove dloadbox-ariarpc  dloadbox-caddy  dloadbox-filebrowser dloadbox-telegrambot
+
+    az_log b "🗑️ Removing installed packages..."
+    rm -rf /usr/bin/*dloadbox* &>/dev/null
+    rm -rf /etc/systemd/system/*dloadbox* &>/dev/null
+    az_log b "📂 Removing files..."
+    rm -rf /opt/dloadbox &>/dev/null
+    if [ ! -d "/opt/dloadbox" ]; then
+        az_log bg "✅ Files removed successfully"
+    else
+        az_log br "❌ Failed to remove files"
+    fi
+
+    az_log b "👤 Removing user and group..."
+    userdel -r dloadbox &>/dev/null
+    groupdel dloadbox &>/dev/null
+    if ! id "dloadbox" &>/dev/null && ! grep -q "^dloadbox:" /etc/group; then
+        az_log bg "✅ User and group removed successfully"
+    else
+        az_log br "❌ Failed to remove user and group"
+    fi
+    az_log b "Removing firewall rules..."
+    firewall_config --remove "$CONFIG_WEBSERVER_PORT" "$CONFIG_ARIA2_RPC_LISTEN_PORT" "$CONFIG_FILEBROWSER_PORT"
+    az_log b "---------------------------------"
+    if [ ! -d "/opt/dloadbox" ] && ! id "dloadbox" &>/dev/null && ! grep -q "^dloadbox:" /etc/group; then
+        az_log bg "✅ Uninstallation completed successfully"
+    else
+        az_log br "❌ Uninstallation completed with some errors"
+    fi
+    az_log b "Done"
+    az_log b "---------------------------------"
+    az_log b "Uninstall log saved to $LOG_FILE"
+    sleep 1
+    az_log b "Feel free to open an issue on GitHub if you need help"
+    sleep 1
+    az_log b "https://github.com/dloadbox/dloadbox/issues"
+    sleep 1
+    az_log b "---------------------------------"
+    sleep 1
+    clear
+    reset
+    exit 0
+
+}
 menu_main() {
     clear
     setup_static_header
     echo -e "\n  ${BOLD}${CYAN}MAIN MENU${NC}"
     echo -e "  ${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
-    echo -e "  1) ${GREEN}View DloadBox Access information${NC}"
-    echo -e "  2) ${GREEN}Manage DloadBox services${NC}"
-    echo -e "  3) ${GREEN}Change Configuration & Settings${NC}"
+    echo -e "  1) ${GREEN}View DloadBox Access information (Coming Soon)${NC}"
+    echo -e "  2) ${GREEN}Manage DloadBox services (Coming Soon)${NC}"
+    echo -e "  3) ${GREEN}Change Configuration & Settings (Coming Soon)${NC}"
     echo -e "  4) ${RED}Uninstall Or Reinstall Dloadbox${NC}"
     echo -e "  e) ${YELLOW}Exit${NC}"
     echo -en "\nEnter your choice: "
@@ -857,7 +1074,7 @@ menu_main() {
             settings_menu
             ;;
         4)
-            uninstall_reinstall_menu
+            menu_uninstall_reinstall
             ;;
         e)
             echo "Exiting..."
@@ -913,11 +1130,43 @@ services_menu() {
             ;;
     esac
 }
+menu_uninstall_reinstall(){
+    clear
+    setup_static_header
+    echo -e "\n  ${BOLD}${CYAN}MAIN MENU > UNINSTALL/REINSTALL${NC}"
+    echo -e "  ${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
+    echo -e "  1) ${GREEN}Uninstall DloadBox${NC}"
+    #echo -e "  2) ${GREEN}Reinstall DloadBox${NC}"
+    echo -e "  0) ${YELLOW}Back to Main Menu${NC}"
+    echo -e "  e) ${YELLOW}Exit${NC}"
+    echo -en "\nEnter your choice: "
+    read -r choice
+    case $choice in
+        1)
+            dloadbox_uninstall
+            ;;
+        #2)
+        #    reinstall_dloadbox
+        #    ;;
+        0)
+            menu_main
+            ;;
+        e)
+            echo "Exiting..."
+            clear
+            exit 0
+            ;;
+        *)
+            echo "Invalid choice, try again."
+            sleep 1
+            menu_uninstall_reinstall
+            ;;
+    esac
+}
 main() {
     init_variables
     setup_static_header
-    az_log b "First Let's check if DloadBox Files and Directories are OK"
-    sleep 2
+    az_log b "Checking Requerments..."
     check_hierarchy
     if [[ "$CHECK_HIERARCHY_ISOK" == "false" ]]; then
         az_log br "Error: Some DloadBox Files and Directories are missing, can't Continue"
