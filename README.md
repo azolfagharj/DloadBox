@@ -49,6 +49,12 @@ chmod +x dloadbox-installer.sh && \
 ```
 That's it! The installer will handle everything for you automatically.
 
+## 🚫 Forking Policy
+
+Before forking this project, please read the [Contribution Guide](./CONTRIBUTING.md).
+Forking without prior approval is not allowed.
+
+
 ## Open-Source Software Used in This Project
 
 This platform utilizes various open-source projects to provide its core functionalities. Below is a list of the software used, along with their respective licenses and purposes:
