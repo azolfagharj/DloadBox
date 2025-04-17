@@ -1,0 +1,14 @@
+[Unit]
+Description=Main service for dloadbox components
+Requires=dloadbox-ariarpc.service dloadbox-caddy.service dloadbox-filebrowser.service dloadbox-telegrambot.service
+BindsTo=dloadbox-ariarpc.service dloadbox-caddy.service dloadbox-filebrowser.service dloadbox-telegrambot.service
+After=dloadbox-ariarpc.service dloadbox-caddy.service dloadbox-filebrowser.service dloadbox-telegrambot.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/bin/true
+ExecStop=/bin/true
+
+[Install]
+WantedBy=multi-user.target
