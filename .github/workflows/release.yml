@@ -29,25 +29,25 @@ jobs:
           VERSION=$(grep VERSION_DLOADBOX bin/dloadbox-installer.sh | head -n 1 | awk -F '"' '{print $2}')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Find Telegram package path
-        id: find_telegram_path
-        run: |
-          TELEGRAM_PATH=$(python3 -c "import telegram; print(telegram.__path__[0])")
-          echo "TELEGRAM_PATH=$TELEGRAM_PATH" >> $GITHUB_ENV
-          echo "Found Telegram package at: $TELEGRAM_PATH"
-
-      - name: Build binary with Nuitka
-        run: |
-          mkdir -p build_output
-          nuitka --standalone --onefile \
-            --include-package=requests \
-            --include-package=logging \
-            --include-package=os \
-            --include-package=telegram \
-            --include-data-dir=$TELEGRAM_PATH=telegram \
-            --output-dir=build_output source/dloadbox-telegrambot.py
-          mv build_output/dloadbox-telegrambot.bin bin/dloadbox-telegrambot
-          rm -rf build_output
+#      - name: Find Telegram package path
+#        id: find_telegram_path
+#        run: |
+#          TELEGRAM_PATH=$(python3 -c "import telegram; print(telegram.__path__[0])")
+#          echo "TELEGRAM_PATH=$TELEGRAM_PATH" >> $GITHUB_ENV
+#          echo "Found Telegram package at: $TELEGRAM_PATH"
+#
+#      - name: Build binary with Nuitka
+#        run: |
+#          mkdir -p build_output
+#          nuitka --standalone --onefile \
+#            --include-package=requests \
+#            --include-package=logging \
+#            --include-package=os \
+#            --include-package=telegram \
+#            --include-data-dir=$TELEGRAM_PATH=telegram \
+#            --output-dir=build_output source/dloadbox-telegrambot.py
+#          mv build_output/dloadbox-telegrambot.bin bin/dloadbox-telegrambot
+#          rm -rf build_output
 
       - name: Create release notes
         id: generate_notes
