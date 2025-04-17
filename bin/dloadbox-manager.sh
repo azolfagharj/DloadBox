@@ -4,7 +4,7 @@
 # It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 #region version
 # Version info
-VERSION_DLOADBOX="alpha-2.2.8"
+VERSION_DLOADBOX="alpha-2.2.9"
 VERSION_DLOADBOX_CREATE="2024-12-01"
 VERSION_DLOADBOX_UPDATE="2025-04-17"
 VERSION_FILEBROWSER="2.31.2"
@@ -33,11 +33,14 @@ init_variables(){
     file_dloadbox_info="/opt/dloadbox/dloadbox-info"
     # Config files
     file_config_aria2="/opt/dloadbox/config/dloadbox-aria2.conf"
+    file_config_ariang="/opt/dloadbox/config/dloadbox-ariang.conf"
     file_config_webserver="/opt/dloadbox/config/dloadbox-caddy.conf"
     file_config_telegram_bot="/opt/dloadbox/config/dloadbox-telegrambot.conf"
     file_config_filebrowser_json="/opt/dloadbox/config/dloadbox-filebrowser.json"
     file_config_filebrowser_db="/opt/dloadbox/config/dloadbox-filebrowser.db"
+    file_config_dloadbox="/opt/dloadbox/config/dloadbox.conf"
     # Services files
+    file_service_dloadbox="/opt/dloadbox/services/dloadbox.service"
     file_service_ariarpc="/opt/dloadbox/services/dloadbox-ariarpc.service"
     file_service_webserver="/opt/dloadbox/services/dloadbox-caddy.service"
     file_service_telegram_bot="/opt/dloadbox/services/dloadbox-telegrambot.service"
@@ -49,6 +52,7 @@ init_variables(){
     file_bin_filebrowser="/opt/dloadbox/bin/dloadbox-filebrowser"
     file_bin_dloadbox_manager="/opt/dloadbox/bin/dloadbox-manager.sh"
     file_bin_dloadbox_installer="/opt/dloadbox/bin/dloadbox-installer.sh"
+    file_bin_dloadbox_configurator="/opt/dloadbox/bin/dloadbox-configurator.sh"
     #file_bin_env_python3="/opt/dloadbox/venv/dloadbox-telegrambot/bin/python3"
     # Symbolic links
     #symb_config_webserver="/etc/lighttpd/conf-enabled/dloadbox-lighttpd.conf"
@@ -71,20 +75,24 @@ init_variables(){
     hierarchy=(
         "$file_dloadbox_info"
         "$file_config_aria2"
+        "$file_config_ariang"
         "$file_config_webserver"
         "$file_config_telegram_bot"
         "$file_config_filebrowser_json"
         "$file_config_filebrowser_db"
+        "$file_config_dloadbox"
         "$file_service_ariarpc"
         "$file_service_webserver"
         "$file_service_telegram_bot"
         "$file_service_filebrowser"
+        "$file_service_dloadbox"
         "$file_bin_aria2c"
         "$file_bin_caddy"
         "$file_bin_telegram_bot"
         "$file_bin_filebrowser"
         "$file_bin_dloadbox_manager"
         "$file_bin_dloadbox_installer"
+        "$file_bin_dloadbox_configurator"
         #"$file_bin_env_python3"
         #"$symb_config_webserver"
         "$symb_service_ariarpc"
@@ -142,38 +150,7 @@ init_variables(){
     CHECK_HIERARCHY_ISOK=true
     CHECK_INFOCONFIG_ISOK=true
     #endregion
-    #region InternalConfig
-    # ################################################################################## #
-    # #                               DloadBox Internal Config                       # #
-    # ################################################################################## #
-    # IP config
-    INTERNALCONFIG_IP_MAIN=""
-    INTERNALCONFIG_INTERFACE_MAIN=""
-    # Aria2 config
-    INTERNALCONFIG_ARIA2_RPC_SECRET=""
-    INTERNALCONFIG_ARIA2_RPC_LISTEN_PORT=""
-    # telegram bot config
-    INTERNALCONFIG_TELEGRAMBOT_LIMIT_PERMISSION=""
-    INTERNALCONFIG_TELEGRAMBOT_ALLOWED_USERNAMES=""
-    INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_SECRET=""
-    INTERNALCONFIG_TELEGRAMBOT_ARIA2_RPC_URL=""
-    INTERNALCONFIG_TELEGRAMBOT_BOT_TOKEN=""
-    INTERNALCONFIG_TELEGRAMBOT_BOT_USERNAME=""
-    # Webserver config
-    INTERNALCONFIG_WEBSERVER_PORT=""
-    # Filebrowser config
-    INTERNALCONFIG_FILEBROWSER_PASSWORD=""
-    INTERNALCONFIG_FILEBROWSER_PASSWORD_HASH=""
-    INTERNALCONFIG_FILEBROWSER_USERNAME=""
-    INTERNALCONFIG_FILEBROWSER_PORT=""
-    # AriaNG config
-    INTERNALCONFIG_ARIANG_URL=""
-    INTERNALCONFIG_ARIANG_RPC_SECRET_HASH=""
-    # Services name variables
-    INTERNALCONFIG_SERVICE_NAME_ARIARPC=""
-    INTERNALCONFIG_SERVICE_NAME_FILEBROWSER=""
-    INTERNALCONFIG_SERVICE_NAME_TELEGRAM=""
-    #endregion
+
     #region Log
     # ################################################################################## #
     # #                               DloadBox Log                                     # #

@@ -2,11 +2,12 @@
 Description=Main service for dloadbox components
 Requires=dloadbox-ariarpc.service dloadbox-caddy.service dloadbox-filebrowser.service dloadbox-telegrambot.service
 BindsTo=dloadbox-ariarpc.service dloadbox-caddy.service dloadbox-filebrowser.service dloadbox-telegrambot.service
-After=dloadbox-ariarpc.service dloadbox-caddy.service dloadbox-filebrowser.service dloadbox-telegrambot.service
+Before=dloadbox-ariarpc.service dloadbox-caddy.service dloadbox-filebrowser.service dloadbox-telegrambot.service
 
 [Service]
-Type=oneshot
+Type=notify
 RemainAfterExit=true
+ExecStartPre=/opt/dloadbox/bin/dloadbox-configurator.sh
 ExecStart=/bin/true
 ExecStop=/bin/true
 
