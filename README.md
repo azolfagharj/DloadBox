@@ -10,6 +10,9 @@
 
 ```
 # DloadBox
+
+[![CI](https://github.com/azolfagharj/action-caddy-builder/actions/workflows/ci.yml/badge.svg)](https://github.com/azolfagharj/action-caddy-builder/actions) [![Donate](https://img.shields.io/badge/Donate-to%20Keep%20This%20Project%20Alive-orange)](https://azolfagharj.github.io/donate/)
+
 DloadBox is a complete download management platform combining aria2c, Caddy, ariaNG, RPC integration, and a Telegram bot. It offers a user-friendly web interface and remote control, enabling efficient and scalable management of downloads from anywhere.
 
 # Screenshots
